@@ -5,7 +5,7 @@ import time
 class console:
     # Helper class
 
-    def info(*args, color_rgb="9ed1d3", sep="") -> None:
+    def info(*args, color_rgb="0094c8", sep="") -> None:
         print(console._getColorANSICodeFromHexRGB(color_rgb), "[INFO] ", *args, "\033[39m", sep=sep)
 
     def warn(*args, color_rgb="fcc800", sep="") -> None:

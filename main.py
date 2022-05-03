@@ -1,5 +1,6 @@
 from util.console import console
 from util.helper import executePrelude, executeFinale
+from train.single import getModel
 
 # Use VSCode to open the entire folder, then run this script
 # Otherwise, the import may not be solved
@@ -10,7 +11,10 @@ def main():
     # Do not worry, almost all config would be clean-up if you want
     executePrelude()
 
-    # Finished
+    # Train the model according to 2015 data
+    single_2015_model = getModel("./datasets/data_2015.csv", "HeartDiseaseorAttack")
+
+    # This function do the clean-up and finishing job
     executeFinale()
 
 
