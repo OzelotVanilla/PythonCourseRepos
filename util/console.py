@@ -10,8 +10,11 @@ class console:
     def warn(*args, color_rgb="fcc800", sep="") -> None:
         print(console._getColorANSICodeFromHexRGB(color_rgb), "[WARN] ", *args, "\033[39m", sep=sep)
 
-    def err(*args, color_rgb="ff251e", sep="") -> None:
+    def err(*args, color_rgb="ba2636", sep="") -> None:
         print(console._getColorANSICodeFromHexRGB(color_rgb), "[ERR!] ", *args, "\033[39m", sep=sep)
+
+    def clear() -> None:
+        print("\033c")
 
     def getWidth() -> int:
         return os.get_terminal_size().columns
