@@ -6,9 +6,21 @@ Only for class use.
 
 The Repository for CPS Python 1's assignment and project.
 
+## Before running
+
+1. Download the entire project to a folder
+2. **IMPORTANT** use VSCode to open that folder,
+   ensure that the `main.py` is in the root directory after
+   opening the folder.
+
+
 ## Content
 
-Currently there are no folder created.
+`datasets` folder: save training datasets. Will be created during running the program.
+
+`util` folder: tools that help programming.
+
+`main.py` file: the entry for the project.
 
 ## Detail
 

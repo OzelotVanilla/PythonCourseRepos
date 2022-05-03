@@ -7,6 +7,7 @@ from util.helper import executePrelude, executeFinale
 
 def main():
     # Do preparation jobs, like install tools, download datasets to specified path
+    # Do not worry, almost all config would be clean-up if you want
     executePrelude()
 
     # Finished
