@@ -1,4 +1,5 @@
 import os
+import time
 
 
 class console:
@@ -15,6 +16,9 @@ class console:
 
     def clear() -> None:
         print("\033c")
+
+    def wait(seconds: float) -> None:
+        time.sleep(seconds)
 
     def getWidth() -> int:
         return os.get_terminal_size().columns

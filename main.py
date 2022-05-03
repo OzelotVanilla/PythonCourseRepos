@@ -1,9 +1,16 @@
 from util.console import console
-from util.helper import executePrelude
+from util.helper import executePrelude, executeFinale
+
+# Use VSCode to open the entire folder, then run this script
+# Otherwise, the import may not be solved
 
 
 def main():
+    # Do preparation jobs, like install tools, download datasets to specified path
     executePrelude()
+
+    # Finished
+    executeFinale()
 
 
 if __name__ == "__main__":
@@ -11,3 +18,4 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         console.err("You have stop the program manually.")
+        executeFinale()
