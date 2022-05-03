@@ -11,7 +11,7 @@ def executePrelude() -> None:
     # Use that tool to download datasets
     console.info("Downloading datasets from Kaggle...")
     downloadKaggleDatasets([
-        ("johnsmith88/heart-disease-dataset", "heart", "2015"),
+        ("alexteboul/heart-disease-health-indicators-dataset", "heart_disease_health_indicators_BRFSS2015", "2015"),
         ("kamilpytlak/personal-key-indicators-of-heart-disease", "heart_2020_cleaned", "2020")
     ])
 
@@ -21,9 +21,11 @@ def executeFinale() -> None:
 
     # Ask if remove kaggle command line tool
     if input("Do you want to remove kaggle command line tool (type \"yes\" to uninstall)? ") == "yes":
+        console.warn("Uninstalling Kaggle command line tool...")
         run("pip uninstall kaggle")
         if input("Also remove config file (type \"yes\" to delete)? ") == "yes":
             deleteKaggleConfig()
+        console.info("Kaggle command line tool uninstalled.")
         return None
 
     # Restore backup file if exist

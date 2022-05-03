@@ -2,16 +2,18 @@
 
 Only for class use.
 
-## Introduction
-
-The Repository for CPS Python 1's assignment and project.
-
 ## Before running
 
 1. Download the entire project to a folder
 2. **IMPORTANT** use VSCode to open that folder,
    ensure that the `main.py` is in the root directory after
    opening the folder.
+
+
+## Introduction
+
+The Repository for CPS Python 1's assignment and project.
+
 
 
 ## Content
