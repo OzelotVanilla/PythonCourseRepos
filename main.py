@@ -9,7 +9,7 @@ from train.single import getModel, testModel
 def main():
     # Do preparation jobs, like install tools, download datasets to specified path
     # Do not worry, almost all config would be clean-up if you want
-    # executePrelude()
+    executePrelude()
 
     # Train the model according to 2015 data
     single_2015_model = getModel("./datasets/data_2015.csv", "HeartDiseaseorAttack", use_CPU=True)
