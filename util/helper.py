@@ -17,6 +17,10 @@ def executePrelude() -> None:
 
 
 def executeFinale() -> None:
+    # Prompt that the whole program is end
+    print("\n\n")
+    console.info("The whole program is end. Press enter to continue.")
+    input()
     console.clear()
 
     # Ask if remove kaggle command line tool
@@ -44,7 +48,7 @@ def __installKaggleCommandLineTool() -> None:
     # So it force exit
     if status != 0:
         console.err("Kaggle cannot be installed with Python's pip.")
-        print("\tSolution possible: See error above, solve it and re-run.")
+        print("\tSolution possible: See error above, solve it and re-run.", end="\n\n")
         exit()
 
 

@@ -1,7 +1,9 @@
-from pandas import read_csv as readCSV
+import tensorflow
+from pandas import DataFrame, Series, read_csv as readCSV
 from keras.engine.sequential import Sequential as KerasSeqModel
 from keras.layers import Dense as KerasDenseLayer
 from keras.callbacks import EarlyStopping as KerasEarlyStop
+from keras.engine.training import Model
 
 from util.console import console
 
@@ -9,14 +11,12 @@ from util.console import console
 # This file contains training according to single file
 
 
-def getModel(dataset_path: str, result_column_name: str):
+def getModel(dataset_path: str, result_column_name: str, /, use_CPU: bool = False):
     console.clear()
     console.info("Prepare to traine model from file \"" + dataset_path + "\".")
-    dataset_frame = readCSV(dataset_path)
 
-    # Separate whole dataframe to data column and result column
-    result_column = dataset_frame[result_column_name]
-    data_column = dataset_frame.drop(columns=[result_column_name])
+    # Read and separate whole dataframe to data column and result column
+    result_column, data_column = __splitOneColumn(readCSV(dataset_path), result_column_name)
 
     # Summon the model
     model = KerasSeqModel([
@@ -24,8 +24,11 @@ def getModel(dataset_path: str, result_column_name: str):
         KerasDenseLayer(10, activation="relu"),
         KerasDenseLayer(10, activation="relu")
     ])
-    model.compile(optimizer="adam", loss="mean_squared_error")
-    model.fit(data_column, result_column, validation_split=0.2, callbacks=[KerasEarlyStop(patience=10)])
+
+    # Choose use CPU or GPU
+    with tensorflow.device("/cpu:0" if use_CPU else "/gpu:1"):
+        model.compile(optimizer="adam", loss="mean_squared_error")
+        model.fit(data_column, result_column, validation_split=0.2, callbacks=[KerasEarlyStop(patience=10)])
 
     # Return the model
     console.info(
@@ -33,3 +36,27 @@ def getModel(dataset_path: str, result_column_name: str):
         "\" predicting \"" + result_column_name + "\"."
     )
     return model
+
+
+# Return at least the loss of a model in list
+def testModel(model: Model, dataset_path: str, result_column_name: str, use_CPU: bool = False):
+    console.info("Testing model...")
+    result_column, data_column = __splitOneColumn(readCSV(dataset_path), result_column_name)
+
+    # Choose use CPU or GPU
+    with tensorflow.device("/cpu:0" if use_CPU else "/gpu:1"):
+        eval_result = model.evaluate(data_column, result_column)
+
+    # Check if returned value is not list, change to list for zip function
+    if type(eval_result) != type([]):
+        eval_result = [eval_result]
+    console.info("Model trained, these information available:")
+    result = dict()
+    for (key, value) in zip(model.metrics_names, eval_result):
+        print("\t" + str(key) + ":", value)
+        result[key] = value
+    return result
+
+
+def __splitOneColumn(dataframe: DataFrame, split_column_name: str) -> tuple[Series, DataFrame]:
+    return (dataframe[split_column_name], dataframe.drop(columns=[split_column_name]))

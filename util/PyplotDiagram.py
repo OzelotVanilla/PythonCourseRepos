@@ -22,12 +22,12 @@ class PyplotDiagram:
         self.plot_type = PyplotDiagram.PlotType.pending
 
     def loadImage(self, path: str):
-        if self._checkIfAbleToAdd():
+        if self.__checkIfAbleToAdd():
             plt.figure(self.id)
             plt.imshow(imgplt.imread(path))
             return self
         else:
-            self._failToAdd()
+            self.__failToAdd()
 
     def loadFunction(self, func):
         plt.figure(self.id)
@@ -36,6 +36,8 @@ class PyplotDiagram:
         plt.figure(self.id)
         plt.title(title)
 
-    def _checkIfAbleToAdd(self): return self.plot_type == self.PlotType.pending
+    def __checkIfAbleToAdd(self): return self.plot_type == self.PlotType.pending
 
-    def _showFailToAddMessage(): pass
+    def __showFailToAddMessage(): pass
+
+    def __failToAdd(): pass
