@@ -5,7 +5,7 @@ Only for class use.
 ## Before running
 
 1. Download the entire project to a folder
-2. **IMPORTANT** use VSCode to open that folder,
+2. **IMPORTANT** use VSCode to **open that folder**,
    ensure that the `main.py` is in the root directory after
    opening the folder.
 

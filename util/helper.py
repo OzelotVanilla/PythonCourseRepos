@@ -1,6 +1,8 @@
+from util.console import console
+
 import os
 from os import system as run
-from util.console import console
+import tensorflow
 
 
 def executePrelude() -> None:
@@ -35,6 +37,15 @@ def executeFinale() -> None:
     # Restore backup file if exist
     __restoreKaggleConfig()
     console.clear()
+
+
+def getBestGPUTensorFlow() -> str:
+    available_GPU_list = tensorflow.config.list_physical_devices('GPU')
+    if type(available_GPU_list) != type([]) or len(available_GPU_list) <= 0:
+        console.warn("Assigned to use GPU, but no GPU found by TensorFlow")
+        return "/cpu:0"
+    else:
+        return available_GPU_list[0].name
 
 
 def __installKaggleCommandLineTool() -> None:
