@@ -1,41 +1,38 @@
-from train.tool import splitOneColumn
+from train.tool import splitOneColumn, readCSV
 from util.console import console
 from util.helper import getBestGPUTensorFlow
 
 import tensorflow
-from pandas import read_csv as readCSV
 from keras.engine.sequential import Sequential as KerasSeqModel
 from keras.layers import Dense as KerasDenseLayer
 from keras.callbacks import EarlyStopping as KerasEarlyStop
-from keras.engine.training import Model as KerasModel
+from train.TrainedModel import TrainedModel
 
 
 # This file contains training according to single file
 
 
 def getModel(dataset_path: str, result_column_name: str, /,
-             use_CPU: bool = False, descr_convert: dict[str, dict[str, int]] = None) -> KerasModel:
+             use_CPU: bool = False, descr_convert: dict[str, dict[str, int]] = None) -> TrainedModel:
     console.clear()
     console.info("Prepare to traine model from file \"" + dataset_path + "\".")
 
     # Read and separate whole dataframe to data column and result column
-    result_column, data_column = splitOneColumn(readCSV(dataset_path), result_column_name)
-
-    # If need to change descriptive data to numbers
-    if(descr_convert != None):
-        console.info("Converting descriptive data to numbers:")
-        data_column.replace(descr_convert)
+    result_column, data_column = splitOneColumn(
+        readCSV(dataset_path, descr_convert=descr_convert),
+        result_column_name
+    )
 
     # Summon the model
     model = KerasSeqModel([
-        KerasDenseLayer(10, activation="relu"),
-        KerasDenseLayer(10, activation="relu"),
+        # KerasDenseLayer(10, activation="relu"),
+        # KerasDenseLayer(10, activation="relu"),
         KerasDenseLayer(10, activation="relu")
     ])
 
     # Choose use CPU or GPU
     with tensorflow.device("/cpu:0" if use_CPU else getBestGPUTensorFlow()):
-        model.compile(optimizer="adam", loss="mean_squared_error")
+        model.compile(optimizer="adam", loss="mean_squared_error", metrics=["accuracy"])
         model.fit(data_column, result_column, validation_split=0.2, callbacks=[KerasEarlyStop(patience=10)])
 
     # Return the model
@@ -43,15 +40,18 @@ def getModel(dataset_path: str, result_column_name: str, /,
         "Successfully trained model from file \"" + dataset_path +
         "\" predicting \"" + result_column_name + "\"."
     )
-    return model
+    return TrainedModel(model, dataset_path, result_column_name)
 
 
 # Return at least the loss of a model in list
-def testModel(model: KerasModel, dataset_path: str, result_column_name: str, use_CPU: bool = False) -> dict[str, object]:
+def testModel(model: TrainedModel, /, use_CPU: bool = False, descr_convert: dict[str, dict[str, int]] = None) -> dict[str, object]:
     console.info("Testing model...")
-    result_column, data_column = splitOneColumn(readCSV(dataset_path), result_column_name)
+    result_column, data_column = splitOneColumn(
+        readCSV(model.dataset_path, descr_convert=descr_convert), model.result_column_name
+    )
 
     # Choose use CPU or GPU
+    model = model.model
     with tensorflow.device("/cpu:0" if use_CPU else getBestGPUTensorFlow()):
         eval_result = model.evaluate(data_column, result_column)
 

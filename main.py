@@ -1,3 +1,4 @@
+from numpy import single
 from util.console import console
 from util.helper import executePrelude, executeFinale
 from train.single import getModel, testModel
@@ -9,15 +10,20 @@ from train.single import getModel, testModel
 def main():
     # Do preparation jobs, like install tools, download datasets to specified path
     # Do not worry, almost all config would be clean-up if you want
-    executePrelude()
+    # executePrelude()
 
     # Train the model according to 2015 data
-    single_2015_model = getModel("./datasets/data_2015.csv", "HeartDiseaseorAttack", use_CPU=True)
-    test_result_single_2015_model = testModel(
-        single_2015_model,
-        "./datasets/data_2015.csv", "HeartDiseaseorAttack",
-        use_CPU=True
+    # single_2015_model = getModel("./datasets/data_2015.csv", "HeartDiseaseorAttack", use_CPU=True)
+    # test_result_single_2015_model = testModel(
+    #     single_2015_model,
+    #     "./datasets/data_2015.csv", "HeartDiseaseorAttack",
+    #     use_CPU=True
+    # )
+    single_2020_model = getModel(
+        "./datasets/data_2020.csv", "HeartDisease",
+        use_CPU=True, descr_convert=getCSV2020ReplaceDict()
     )
+    testModel(single_2020_model, use_CPU=True, descr_convert=getCSV2020ReplaceDict())
 
     # This function do the clean-up and finishing job
     executeFinale()
@@ -26,7 +32,8 @@ def main():
 def getCSV2020ReplaceDict() -> dict[str, dict[str, int]]:
     # This function just return the dict to replace the discriptive data
     # To make main concise, this function is used
-    return {"Smoking": {"Yes": 1, "No": 0},
+    return {"HeartDisease": {"Yes": 1, "No": 0},
+            "Smoking": {"Yes": 1, "No": 0},
             "AlcoholDrinking": {"Yes": 1, "No": 0},
             "Stroke": {"Yes": 1, "No": 0},
             "DiffWalking": {"Yes": 1, "No": 0},

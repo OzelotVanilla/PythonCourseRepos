@@ -1,4 +1,21 @@
+from util.console import console
+
 from pandas import DataFrame, Series
+from pandas import read_csv
+
+
+def readCSV(path: str, descr_convert: dict[str, dict[str, int]] = None) -> DataFrame:
+    dataframe = read_csv(path)
+
+    # If need to change descriptive data to numbers
+    if descr_convert != None:
+        console.info("Converting descriptive data to numbers:")
+        for key in descr_convert:
+            print("\t", key + ":", descr_convert[key])
+        dataframe.replace(descr_convert, inplace=True)
+        console.info("Replaced required data.")
+
+    return dataframe
 
 
 def splitOneColumn(dataframe: DataFrame, split_column_name: str) -> tuple[Series, DataFrame]:
