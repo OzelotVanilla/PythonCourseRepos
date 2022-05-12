@@ -23,10 +23,10 @@ def main():
         "./datasets/data_2020.csv", "HeartDisease",
         use_CPU=True, descr_convert=getCSV2020ReplaceDict()
     )
-    testModel(single_2020_model, use_CPU=True, descr_convert=getCSV2020ReplaceDict())
+    testModel(single_2020_model, use_CPU=True)
 
     # This function do the clean-up and finishing job
-    executeFinale()
+    # executeFinale()
 
 
 def getCSV2020ReplaceDict() -> dict[str, dict[str, int]]:

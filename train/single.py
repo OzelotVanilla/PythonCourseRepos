@@ -40,15 +40,13 @@ def getModel(dataset_path: str, result_column_name: str, /,
         "Successfully trained model from file \"" + dataset_path +
         "\" predicting \"" + result_column_name + "\"."
     )
-    return TrainedModel(model, dataset_path, result_column_name)
+    return TrainedModel(model, result_column, data_column)
 
 
 # Return at least the loss of a model in list
-def testModel(model: TrainedModel, /, use_CPU: bool = False, descr_convert: dict[str, dict[str, int]] = None) -> dict[str, object]:
+def testModel(model: TrainedModel, /, use_CPU: bool = False) -> dict[str, object]:
     console.info("Testing model...")
-    result_column, data_column = splitOneColumn(
-        readCSV(model.dataset_path, descr_convert=descr_convert), model.result_column_name
-    )
+    result_column, data_column = model.result_column, model.data_column
 
     # Choose use CPU or GPU
     model = model.model

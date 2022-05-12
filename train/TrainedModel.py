@@ -2,7 +2,7 @@ from keras.engine.training import Model as KerasModel
 
 
 class TrainedModel:
-    def __init__(self, model: KerasModel, dataset_path: str, result_column_name: str):
+    def __init__(self, model: KerasModel, result_column, data_column):
         self.model = model
-        self.dataset_path = dataset_path
-        self.result_column_name = result_column_name
+        self.result_column = result_column
+        self.data_column = data_column
