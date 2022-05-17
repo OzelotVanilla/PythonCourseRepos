@@ -1,3 +1,4 @@
+from importlib.util import find_spec as hasModule
 from util.console import console
 
 import os
@@ -6,6 +7,9 @@ import tensorflow
 
 
 def executePrelude() -> None:
+    # Check if required package is installed
+    __checkIfRequiredModuleInstalled()
+
     # Install and configure Kaggle command line tool
     __installKaggleCommandLineTool()
     __prepareKaggleRunningEnv()
@@ -27,16 +31,12 @@ def executeFinale() -> None:
 
     # Ask if remove kaggle command line tool
     if input("Do you want to remove kaggle command line tool (type \"yes\" to uninstall)? ") == "yes":
-        console.warn("Uninstalling Kaggle command line tool...")
-        run("pip uninstall kaggle")
-        if input("Also remove config file (type \"yes\" to delete)? ") == "yes":
-            __deleteKaggleConfig()
-        console.info("Kaggle command line tool uninstalled.\n")
-        return None
+        __uninstallKaggle()
 
-    # Restore backup file if exist
-    __restoreKaggleConfig()
-    console.clear()
+    # Restore backup file if not uninstall and it exist
+    else:
+        __restoreKaggleConfig()
+        console.clear()
 
 
 def getBestGPUTensorFlow() -> str:
@@ -46,6 +46,16 @@ def getBestGPUTensorFlow() -> str:
         return "/cpu:0"
     else:
         return available_GPU_list[0].name
+
+
+def __checkIfRequiredModuleInstalled() -> None:
+    console.info("Checking if required modules are installed...")
+    for mod_name in ["tensorflow", "keras", "numpy", "pandas"]:
+        if not hasModule(mod_name):
+            console.err("No module named \"" + mod_name + "\". Try to install, and re-run.")
+            exit()
+    console.info("All required modules found.")
+    console.wait(2)
 
 
 def __installKaggleCommandLineTool() -> None:
@@ -127,6 +137,14 @@ def __downloadKaggleDatasets(dataset_info_list: list[tuple[str, str]]):
                     os.remove("./datasets/" + info_tuple[1] + ".csv")
                 exit()
         os.rename("./datasets/" + dataset_info[1] + ".csv", new_file_path)
+
+
+def __uninstallKaggle() -> None:
+    console.warn("Uninstalling Kaggle command line tool...")
+    run("pip uninstall kaggle")
+    if input("Also remove config file (type \"yes\" to delete)? ") == "yes":
+        __deleteKaggleConfig()
+    console.info("Kaggle command line tool uninstalled.\n")
 
 
 def __deleteKaggleConfig():

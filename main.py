@@ -1,7 +1,7 @@
-from numpy import single
 from util.console import console
 from util.helper import executePrelude, executeFinale
 from train.single import getModel, testModel
+from keras.layers import Dense as KerasDenseLayer
 
 # Use VSCode to open the entire folder, then run this script
 # Otherwise, the import may not be solved
@@ -10,18 +10,20 @@ from train.single import getModel, testModel
 def main():
     # Do preparation jobs, like install tools, download datasets to specified path
     # Do not worry, almost all config would be clean-up if you want
-    # executePrelude()
+    executePrelude()
 
     # Train the model according to 2015 data
-    # single_2015_model = getModel("./datasets/data_2015.csv", "HeartDiseaseorAttack", use_CPU=True)
-    # test_result_single_2015_model = testModel(
-    #     single_2015_model,
-    #     "./datasets/data_2015.csv", "HeartDiseaseorAttack",
-    #     use_CPU=True
-    # )
+    single_2015_model = getModel(
+        "./datasets/data_2015.csv", "HeartDiseaseorAttack",
+        use_CPU=True, layers=[KerasDenseLayer(10, activation="relu")]
+    )
+    testModel(single_2015_model, use_CPU=True)
+
+    # Train the model according to 2020 data
     single_2020_model = getModel(
         "./datasets/data_2020.csv", "HeartDisease",
-        use_CPU=True, descr_convert=getCSV2020ReplaceDict()
+        use_CPU=True, descr_convert=getCSV2020ReplaceDict(),
+        layers=[KerasDenseLayer(10, activation="relu")]
     )
     testModel(single_2020_model, use_CPU=True)
 

@@ -3,6 +3,7 @@ from util.console import console
 from util.helper import getBestGPUTensorFlow
 
 import tensorflow
+from keras.engine.base_layer import Layer as KerasLayer
 from keras.engine.sequential import Sequential as KerasSeqModel
 from keras.layers import Dense as KerasDenseLayer
 from keras.callbacks import EarlyStopping as KerasEarlyStop
@@ -12,10 +13,13 @@ from train.TrainedModel import TrainedModel
 # This file contains training according to single file
 
 
-def getModel(dataset_path: str, result_column_name: str, /,
-             use_CPU: bool = False, descr_convert: dict[str, dict[str, int]] = None) -> TrainedModel:
+def getModel(dataset_path: str, result_column_name: str,
+             /, use_CPU: bool = False, descr_convert: dict[str, dict[str, int]] = None,
+             layers: list[KerasLayer] = [KerasDenseLayer(10, activation="relu")] * 3,
+             compile_optimizer: str = "adam", compile_loss_function="mean_squared_error",
+             compile_metrics=["accuracy"], fit_callbacks=[KerasEarlyStop(patience=10)]) -> TrainedModel:
     console.clear()
-    console.info("Prepare to traine model from file \"" + dataset_path + "\".")
+    console.info("Prepare to train model from file \"" + dataset_path + "\".")
 
     # Read and separate whole dataframe to data column and result column
     result_column, data_column = splitOneColumn(
@@ -24,16 +28,16 @@ def getModel(dataset_path: str, result_column_name: str, /,
     )
 
     # Summon the model
-    model = KerasSeqModel([
-        # KerasDenseLayer(10, activation="relu"),
-        # KerasDenseLayer(10, activation="relu"),
-        KerasDenseLayer(10, activation="relu")
-    ])
+    model = KerasSeqModel(layers)
+    console.info(
+        "Ready to train model from file \"" + dataset_path +
+        "\" predicting \"" + result_column_name + "\"."
+    )
 
     # Choose use CPU or GPU
     with tensorflow.device("/cpu:0" if use_CPU else getBestGPUTensorFlow()):
-        model.compile(optimizer="adam", loss="mean_squared_error", metrics=["accuracy"])
-        model.fit(data_column, result_column, validation_split=0.2, callbacks=[KerasEarlyStop(patience=10)])
+        model.compile(optimizer=compile_optimizer, loss=compile_loss_function, metrics=compile_metrics)
+        model.fit(data_column, result_column, validation_split=0.2, callbacks=fit_callbacks)
 
     # Return the model
     console.info(

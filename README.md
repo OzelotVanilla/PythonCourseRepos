@@ -8,6 +8,12 @@ Only for class use.
 2. **IMPORTANT** use VSCode to **open that folder**,
    ensure that the `main.py` is in the root directory after
    opening the folder.
+3. Check if the required package is installed.
+   If not, please see error message, and install them.
+   * tensorflow
+   * numpy
+   * keras
+   * pandas
 
 
 ## Introduction
