@@ -1,12 +1,11 @@
 import pandas as pd
+import numpy as np
 from sklearn.feature_selection import mutual_info_classif
 from sklearn.model_selection import train_test_split
-import numpy as np
+# from FCBF_module import FCBFK
 
 # Pre-defined column names for replacement
 # For method unifyColNames
-
-
 def getNameDict():
     return {'HeartDiseaseorAttack': 'HeartDisease',
             'AgeCategory': 'Age',
@@ -69,10 +68,18 @@ def main():
     print("Columns after unification:")
     print(df.columns)
     print()
-    # Feature Selection
+    # Feature Selection (sklearn.feature_selection.mutual_info_classif)
     selectedFeatures = selectFeatures(df, threshold=0.6)
     print("Features selected:")
     print(selectedFeatures)
+    # # Feature Selection (FCBF)
+    # x_selected = df[selectedFeatures].values
+    # # print(x_selected.shape)
+    # y = df.iloc[:, df.columns.to_list().index('HeartDisease')].values
+    # # print(y)
+    # fcbf = FCBFK(k = 6)
+    # x_fcbf_selected = fcbf.fit_transform(x_selected, y)
+    # print(x_fcbf_selected)
 
 if __name__ == '__main__':
     main()
