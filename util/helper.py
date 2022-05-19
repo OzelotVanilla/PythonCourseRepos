@@ -3,12 +3,25 @@ from util.console import console
 
 import os
 from os import system as run
+import requests
 import tensorflow
+
+
+__module_to_check = ["tensorflow", "keras", "numpy", "pandas"]
 
 
 def executePrelude() -> None:
     # Check if required package is installed
     __checkIfRequiredModuleInstalled()
+
+    # Download required util from GitHub
+    __downloadFromWebRaw([
+        {
+            "url": "https://raw.githubusercontent.com/SantiagoEG/FCBF_module/master/FCBF_module.py",
+            "path": "lib/",
+            "name": "FCBF_module.py"
+        }
+    ])
 
     # Install and configure Kaggle command line tool
     __installKaggleCommandLineTool()
@@ -50,11 +63,34 @@ def getBestGPUTensorFlow() -> str:
 
 def __checkIfRequiredModuleInstalled() -> None:
     console.info("Checking if required modules are installed...")
-    for mod_name in ["tensorflow", "keras", "numpy", "pandas"]:
+    should_exit = False
+
+    for mod_name in __module_to_check:
         if not hasModule(mod_name):
-            console.err("No module named \"" + mod_name + "\". Try to install, and re-run.")
-            exit()
+            console.err("No module named \"" + mod_name + "\". Try to install using pip3, and re-run.")
+            should_exit = True
+        elif not should_exit:
+            print("\tSatisfied:", mod_name)
+    exit() if should_exit else None
     console.info("All required modules found.")
+    console.wait(2)
+
+
+def __downloadFromWebRaw(req_list: list[dict[str, ]]) -> None:
+    console.info("Downloading raw content from web...")
+
+    # Using dict to send request info in a list
+    for req_info in req_list:
+        # First, get dir, create if not exist
+        path_dir = req_info["path"]
+        if not (os.path.exists(path_dir) and os.path.isdir(path_dir)):
+            os.mkdir(path_dir)
+        with open(os.path.join(path_dir, req_info["name"]), "wb") as output_file:
+            content_url = req_info["url"]
+            print("\tDownloading from \"" + str(content_url) + "\"...", end="")
+            output_file.write(requests.get(content_url).content)
+            print("\tDone.")
+    console.info("All required things downloaded.")
     console.wait(2)
 
 
