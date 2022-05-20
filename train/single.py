@@ -17,7 +17,8 @@ def getModel(dataset_path: str, result_column_name: str,
              /, use_CPU: bool = False, descr_convert: dict[str, dict[str, int]] = None,
              layers: list[KerasLayer] = [KerasDenseLayer(10, activation="relu")] * 3,
              compile_optimizer: str = "adam", compile_loss_function="mean_squared_error",
-             compile_metrics=["accuracy"], fit_callbacks=[KerasEarlyStop(patience=10)]) -> TrainedModel:
+             compile_metrics=["accuracy"],
+             fit_callbacks=[KerasEarlyStop(patience=10)], fit_epoch: int = 1) -> TrainedModel:
     console.clear()
     console.info("Prepare to train model from file \"" + dataset_path + "\".")
 
@@ -37,7 +38,7 @@ def getModel(dataset_path: str, result_column_name: str,
     # Choose use CPU or GPU
     with tensorflow.device("/cpu:0" if use_CPU else getBestGPUTensorFlow()):
         model.compile(optimizer=compile_optimizer, loss=compile_loss_function, metrics=compile_metrics)
-        model.fit(data_column, result_column, validation_split=0.2, callbacks=fit_callbacks)
+        model.fit(data_column, result_column, validation_split=0.2, callbacks=fit_callbacks, epochs=fit_epoch)
 
     # Return the model
     console.info(

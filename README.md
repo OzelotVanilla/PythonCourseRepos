@@ -9,11 +9,14 @@ Only for class use.
    ensure that the `main.py` is in the root directory after
    opening the folder.
 3. Check if the required package is installed.
-   If not, please see error message, and install them.
+   If not, please see error message, and install them
+   (There is an installation check, if required library not installed, there will be an error).
    * tensorflow
    * numpy
    * keras
    * pandas
+   * scikit-learn
+   * matplotlib
 
 
 ## Introduction
@@ -26,6 +29,10 @@ The Repository for CPS Python 1's assignment and project.
 
 `datasets` folder: save training datasets. Will be created during running the program.
 
+`lib` folder: useful tools **from others**.
+
+`train` folder: for training models.
+
 `util` folder: tools that help programming.
 
 `main.py` file: the entry for the project.
@@ -33,3 +40,4 @@ The Repository for CPS Python 1's assignment and project.
 ## Detail
 
 For the format, we use autopep8 to manage it.
+

@@ -7,7 +7,7 @@ import requests
 import tensorflow
 
 
-__module_to_check = ["tensorflow", "keras", "numpy", "pandas"]
+__module_to_check = ["tensorflow", "keras", "numpy", "pandas", "sklearn"]
 
 
 def executePrelude() -> None:
