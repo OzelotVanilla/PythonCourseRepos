@@ -1,5 +1,7 @@
 from math import nan
+from sys import api_version
 import pandas as pd
+import pandas.api as pdapi
 import numpy as np
 from sklearn.feature_selection import mutual_info_classif
 from sklearn.model_selection import train_test_split
@@ -83,7 +85,8 @@ def unifyColOrder(*dfs: pd.DataFrame, order_list: list[str] = None) -> None:
         for col_name in order_list:
             # Has column -> exchange two columns
             if col_name in dfs[i].columns:
-                dfs[i].insert(loc=count, column=col_name, value=dfs[i].pop(col_name))
+                dfs[i].insert(loc=count, column=col_name,
+                              value=dfs[i].pop(col_name))
                 count += 1
 
 # Feature Selection Method
@@ -93,7 +96,8 @@ def unifyColOrder(*dfs: pd.DataFrame, order_list: list[str] = None) -> None:
 def selectFeatures(df: pd.DataFrame, train_size=0.8, threshold=0.9, labelColName='HeartDisease'):
     # Split train and test set
     x = df.drop([labelColName], axis=1).values
-    y = df.iloc[:, df.columns.to_list().index(labelColName)].values.reshape(-1, 1)
+    y = df.iloc[:, df.columns.to_list().index(
+        labelColName)].values.reshape(-1, 1)
     y = np.ravel(y)
     x_train, x_test, y_train, y_test = train_test_split(
         x, y, train_size=train_size, test_size=1 - train_size, random_state=0, stratify=y
@@ -106,7 +110,8 @@ def selectFeatures(df: pd.DataFrame, train_size=0.8, threshold=0.9, labelColName
     features = df.dtypes[df.dtypes != 'object'].drop(labelColName).index
 
     # Create pairs of importances and features
-    f_list = sorted(zip(map(lambda x: round(x, 4), importances), features), reverse=True)
+    f_list = sorted(
+        zip(map(lambda x: round(x, 4), importances), features), reverse=True)
 
     # Calculate the sum of importance scores
     sum_of_importance = 0
@@ -116,7 +121,8 @@ def selectFeatures(df: pd.DataFrame, train_size=0.8, threshold=0.9, labelColName
     # Select the important features from top to bottom until the accumulated importance reaches threshold
     temp_sum = 0
     selected_features = []
-    f_list = sorted(zip(map(lambda x: round(x, 4), importances / sum_of_importance), features), reverse=True)
+    f_list = sorted(zip(map(lambda x: round(x, 4), importances /
+                    sum_of_importance), features), reverse=True)
     for i in range(len(f_list)):
         temp_sum += f_list[i][0]
         selected_features.append(f_list[i][1])
@@ -131,17 +137,27 @@ def selectFeatures(df: pd.DataFrame, train_size=0.8, threshold=0.9, labelColName
 
 # Use Default Value
 
-def defaultValueMakeUp(df: pd.DataFrame, col_name, default_val=-1, insert_loc=-1):
+def defaultValueMakeUp(df_src: pd.DataFrame, df_dist: pd.DataFrame, col_name, default_val=-1, insert_loc=-1):
     # Column exists -> do nothing
-    if col_name in df.columns.to_list():
-        return
+    if col_name in df_dist.columns.to_list():
+        return None
     # Create a new column and fill default value
-    df.insert(loc=insert_loc, column=col_name, value=default_val)
+    df_dist.insert(loc=insert_loc, column=col_name, value=default_val)
+
+# Use Average Value
+
+
+def averageValueMakeUp(df_src: pd.DataFrame, df_dist: pd.DataFrame, col_name, default_val=-1, insert_loc=-1):
+    average = df_src[col_name].mean()
+    if pdapi.types.is_integer_dtype(df_src[col_name].dtype): average = round(average)
+    # average = round(average) 
+    defaultValueMakeUp(df_src, df_dist, col_name,
+                       default_val=average, insert_loc=insert_loc)
 
 # Use Default Value (make up for all missing value)
 
 
-def defaultValueMakeUpAll(df_src: pd.DataFrame, df_dist: pd.DataFrame, default_val=-1):
+def makeUpAllMissingValue(df_src: pd.DataFrame, df_dist: pd.DataFrame, makeUpFunc=defaultValueMakeUp, default_val=-1):
     # Unify Column Order
     unifyColOrder(df_src, df_dist)
     # Get column names from df_src
@@ -149,7 +165,9 @@ def defaultValueMakeUpAll(df_src: pd.DataFrame, df_dist: pd.DataFrame, default_v
     # Find missing columns -> defaultValueMakeUp
     for i in range(len(col_names)):
         if not (col_names[i] in df_dist.columns):
-            df_dist.insert(loc=i, column=col_names[i], value=default_val)
+            makeUpFunc(df_src=df_src, df_dist=df_dist,
+                       col_name=col_names[i], default_val=default_val, insert_loc=i)
+            # df_dist.insert(loc=i, column=col_names[i], value=default_val)
 
 
 # Test code
@@ -164,10 +182,19 @@ def main():
     print("Columns after unification:")
     print(df_2015.columns)
     print(df_2020.columns)
-    # Unify Column Order
-    unifyColOrder(df_2015, df_2020)
-    print(df_2015.columns)
+    # # Unify Column Order
+    # unifyColOrder(df_2015, df_2020)
+    # print(df_2015.columns)
+    # print(df_2020.columns)
+    # Feature Selection
+    featureSelected = selectFeatures(df_2015, labelColName="HeartDisease")
+    df_2015_fs = df_2015[featureSelected]
+    # Missing Value Make Up
+    makeUpAllMissingValue(df_2015_fs, df_2020, averageValueMakeUp)
+    print(df_2015_fs.columns)
     print(df_2020.columns)
+    df_2020_fs = df_2020[featureSelected]
+    print(df_2020_fs)
     # # Feature Selection (sklearn.feature_selection.mutual_info_classif)
     # selected_features = selectFeatures(df, threshold=0.6)
     # print("Features selected:")

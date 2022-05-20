@@ -122,8 +122,7 @@ def __prepareKaggleRunningEnv() -> None:
         console.info("Created \"~/.kaggle/\" folder.")
 
     # Check if "kaggle.json" exist, if exist, backup it
-    if (os.path.isfile(user_home_path + "/.kaggle/kaggle.json")
-            and os.path.exists(user_home_path + "/.kaggle/kaggle.json")):
+    if (os.path.exists(user_home_path + "/.kaggle/kaggle.json" and os.path.isfile(user_home_path + "/.kaggle/kaggle.json"))):
         # If the backup also exists (happens when you have run this script for multiple times)
         if os.path.exists(user_home_path + "/.kaggle/kaggle.json.course_projcet_backup"):
             os.remove(user_home_path + "/.kaggle/kaggle.json.course_projcet_backup")
@@ -162,7 +161,7 @@ def __downloadKaggleDatasets(dataset_info_list: list[tuple[str, str]]):
 
         # Renaming datasets with name given
         new_file_path = "./datasets/data_" + dataset_info[2] + ".csv"
-        if os.path.isfile(new_file_path) and os.path.exists(new_file_path):
+        if os.path.exists(new_file_path) and os.path.isfile(new_file_path):
             try:
                 os.remove(new_file_path)
             except PermissionError:
