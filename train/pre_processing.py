@@ -1,3 +1,5 @@
+from util.console import console
+
 from math import nan
 from sys import api_version
 import pandas as pd
@@ -11,7 +13,7 @@ from sklearn.model_selection import train_test_split
 default_value_to_fill = (-1, 0, -100000, 100000, nan, np.NaN)
 
 
-def getCSV2020ReplaceDict() -> dict[str, dict[str, int]]:
+def getClassToDigitDict() -> dict[str, dict[str, int]]:
     # This function just return the dict to replace the discriptive data
     # According to the standard of https://www.cdc.gov/brfss/annual_data/2015/pdf/codebook15_llcp.pdf
     # To make main concise, this function is used
@@ -21,17 +23,25 @@ def getCSV2020ReplaceDict() -> dict[str, dict[str, int]]:
             "Stroke": {"Yes": 1, "No": 0},
             "DiffWalking": {"Yes": 1, "No": 0},
             "Sex": {"Other": 0, "Female": 1, "Male": 2},
-            "AgeCategory": {"18-24": 1, "25-29": 2, "30-34": 3, "35-39": 4, "40-44": 5, "45-49": 6,
-                            "50-54": 7, "55-59": 8, "60-64": 9, "65-69": 10, "70-74": 11, "75-79": 12,
-                            "80 or older": 13},
+            "Age": {"18-24": 1, "25-29": 2, "30-34": 3, "35-39": 4, "40-44": 5, "45-49": 6,
+                    "50-54": 7, "55-59": 8, "60-64": 9, "65-69": 10, "70-74": 11, "75-79": 12,
+                    "80 or older": 13},
             "Race": {"Other": 0, "White": 1, "Black": 2, "Asian": 3,
                      "American Indian/Alaskan Native": 4, "Hispanic": 5},
-            "Diabetic": {"No": 0, "No, borderline diabetes": 1, "Yes (during pregnancy)": 2, "Yes": 3},
-            "PhysicalActivity": {"Yes": 1, "No": 0},
-            "GenHealth": {"Poor": 0, "Fair": 1, "Good": 2, "Very good": 3, "Excellent": 4},
+            "Diabetes": {"No": 0, "No, borderline diabetes": 1, "Yes (during pregnancy)": 2, "Yes": 3},
+            "PhysActivity": {"Yes": 1, "No": 0},
+            "GenHlth": {"Poor": 0, "Fair": 1, "Good": 2, "Very good": 3, "Excellent": 4},
             "Asthma": {"Yes": 1, "No": 0},
             "KidneyDisease": {"Yes": 1, "No": 0},
             "SkinCancer": {"Yes": 1, "No": 0}}
+
+
+def classToDigitReplace(dataframe: pd.DataFrame, replace_dict: dict[str, dict[str, int]]):
+    console.info("Converting descriptive data to numbers:")
+    for key in replace_dict:
+        print("\t", key + ":", replace_dict[key])
+    dataframe.replace(replace_dict, inplace=True)
+    console.info("Replaced required data.")
 
 
 # Pre-defined column names for replacement
@@ -88,6 +98,13 @@ def unifyColOrder(*dfs: pd.DataFrame, order_list: list[str] = None) -> None:
                 dfs[i].insert(loc=count, column=col_name,
                               value=dfs[i].pop(col_name))
                 count += 1
+
+# Get the
+
+
+def getSharedFeatures(*dfs: pd.DataFrame) -> list:
+
+    pass
 
 # Feature Selection Method
 # Select influential features from the columns of the dataframe
@@ -148,13 +165,23 @@ def defaultValueMakeUp(df_src: pd.DataFrame, df_dist: pd.DataFrame, col_name, de
 
 
 def averageValueMakeUp(df_src: pd.DataFrame, df_dist: pd.DataFrame, col_name, default_val=-1, insert_loc=-1):
-    average = df_src[col_name].mean()
-    if pdapi.types.is_integer_dtype(df_src[col_name].dtype): average = round(average)
-    # average = round(average) 
+    # Because all features to make up for are digits that represent certain classifications
+    # The average value is the most frequent appearing digit
+    average = df_src[col_name].value_counts().index[0]
+    # Fill the missing feature with average value
     defaultValueMakeUp(df_src, df_dist, col_name,
                        default_val=average, insert_loc=insert_loc)
 
-# Use Default Value (make up for all missing value)
+# Use ML model to predict the missing values
+# according to the shared features between the two datasets
+
+
+def mlPredictValueMakeUp(df_src: pd.DataFrame, df_dist: pd.DataFrame, col_name, default_val=-1, insert_loc=-1):
+    # Get the shared features between the two datasets
+    pass
+
+# Feature Making up function
+# use the specific makeUpFunc to create values
 
 
 def makeUpAllMissingValue(df_src: pd.DataFrame, df_dist: pd.DataFrame, makeUpFunc=defaultValueMakeUp, default_val=-1):
@@ -182,10 +209,6 @@ def main():
     print("Columns after unification:")
     print(df_2015.columns)
     print(df_2020.columns)
-    # # Unify Column Order
-    # unifyColOrder(df_2015, df_2020)
-    # print(df_2015.columns)
-    # print(df_2020.columns)
     # Feature Selection
     featureSelected = selectFeatures(df_2015, labelColName="HeartDisease")
     df_2015_fs = df_2015[featureSelected]
@@ -195,18 +218,6 @@ def main():
     print(df_2020.columns)
     df_2020_fs = df_2020[featureSelected]
     print(df_2020_fs)
-    # # Feature Selection (sklearn.feature_selection.mutual_info_classif)
-    # selected_features = selectFeatures(df, threshold=0.6)
-    # print("Features selected:")
-    # print(selected_features)
-    # # # Feature Selection (FCBF)
-    # # x_selected = df[selectedFeatures].values
-    # # # print(x_selected.shape)
-    # # y = df.iloc[:, df.columns.to_list().index('HeartDisease')].values
-    # # # print(y)
-    # # fcbf = FCBFK(k = 6)
-    # # x_fcbf_selected = fcbf.fit_transform(x_selected, y)
-    # # print(x_fcbf_selected)
 
 
 if __name__ == '__main__':

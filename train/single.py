@@ -1,4 +1,5 @@
 from train.tool import splitOneColumn, readCSV
+from train.TrainedModel import TrainedModel
 from util.console import console
 from util.helper import getBestGPUTensorFlow
 
@@ -7,32 +8,45 @@ from keras.engine.base_layer import Layer as KerasLayer
 from keras.engine.sequential import Sequential as KerasSeqModel
 from keras.layers import Dense as KerasDenseLayer
 from keras.callbacks import EarlyStopping as KerasEarlyStop
-from train.TrainedModel import TrainedModel
+from pandas import DataFrame
 
 
 # This file contains training according to single file
 
 
-def getModel(dataset_path: str, result_column_name: str,
+def getModel(dataset_path_or_dataframe: str | DataFrame, tartget_column_name: str,
              /, use_CPU: bool = False, descr_convert: dict[str, dict[str, int]] = None,
              layers: list[KerasLayer] = [KerasDenseLayer(10, activation="relu")] * 3,
              compile_optimizer: str = "adam", compile_loss_function="mean_squared_error",
              compile_metrics=["accuracy"],
-             fit_callbacks=[KerasEarlyStop(patience=10)], fit_epoch: int = 1) -> TrainedModel:
+             fit_callbacks=[KerasEarlyStop(patience=3)], fit_epoch: int = 1) -> TrainedModel:
     console.clear()
-    console.info("Prepare to train model from file \"" + dataset_path + "\".")
+    path_type = type(dataset_path_or_dataframe)
+    if path_type == str:
+        console.info("Prepare to read from file \"" + dataset_path_or_dataframe + "\".")
+        result_column, data_column = splitOneColumn(
+            readCSV(dataset_path_or_dataframe, descr_convert=descr_convert),
+            tartget_column_name
+        )
+    elif path_type == DataFrame:
+        console.info("Prepare to read using pandas' dataframe \"" + dataset_path_or_dataframe.__repr__() + "\".")
+        result_column, data_column = splitOneColumn(
+            dataset_path_or_dataframe,
+            tartget_column_name
+        )
+    else:
+        console.err(
+            "Wrong parameter for dataset_path_or_dataframe: " +
+            str(dataset_path_or_dataframe) + ", check again."
+        )
+        raise TypeError()
 
     # Read and separate whole dataframe to data column and result column
-    result_column, data_column = splitOneColumn(
-        readCSV(dataset_path, descr_convert=descr_convert),
-        result_column_name
-    )
 
     # Summon the model
     model = KerasSeqModel(layers)
     console.info(
-        "Ready to train model from file \"" + dataset_path +
-        "\" predicting \"" + result_column_name + "\"."
+        "Ready to train model predicting \"" + tartget_column_name + "\"."
     )
 
     # Choose use CPU or GPU
@@ -42,8 +56,7 @@ def getModel(dataset_path: str, result_column_name: str,
 
     # Return the model
     console.info(
-        "Successfully trained model from file \"" + dataset_path +
-        "\" predicting \"" + result_column_name + "\"."
+        "Successfully trained model predicting \"" + tartget_column_name + "\"."
     )
     return TrainedModel(model, result_column, data_column)
 

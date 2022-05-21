@@ -4,7 +4,7 @@ from pandas import DataFrame, Series
 from pandas import read_csv
 
 
-def readCSV(path: str, descr_convert: dict[str, dict[str, int]] = None) -> DataFrame:
+def readCSV(path: str, /, column_name_unify=None, descr_convert: dict[str, dict[str, int]] = None) -> DataFrame:
     dataframe = read_csv(path)
 
     # If need to change descriptive data to numbers
