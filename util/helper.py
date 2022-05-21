@@ -10,7 +10,7 @@ import tensorflow
 __module_to_check = ["tensorflow", "keras", "numpy", "pandas", "sklearn"]
 
 
-def executePrelude() -> None:
+def prepareEnv() -> None:
     # Check if required package is installed
     __checkIfRequiredModuleInstalled()
 
@@ -35,7 +35,7 @@ def executePrelude() -> None:
     ])
 
 
-def executeFinale() -> None:
+def cleanEnv() -> None:
     # Prompt that the whole program is end
     print("\n\n")
     console.info("The whole program is end. Press enter to continue.")

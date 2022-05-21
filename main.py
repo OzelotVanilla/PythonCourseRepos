@@ -1,5 +1,5 @@
 from util.console import console
-from util.helper import executePrelude, executeFinale
+from util.helper import prepareEnv, cleanEnv
 from train.single import getModel, testModel
 from train.pre_processing import getCSV2020ReplaceDict
 
@@ -12,7 +12,7 @@ from keras.layers import Dense as KerasDenseLayer
 def main():
     # Do preparation jobs, like install tools, download datasets to specified path
     # Do not worry, almost all config would be clean-up if you want
-    executePrelude()
+    prepareEnv()
 
     # Train the model according to 2015 data
     single_2015_model = getModel(
@@ -32,7 +32,7 @@ def main():
     testModel(single_2020_model, use_CPU=True)
 
     # This function do the clean-up and finishing job
-    executeFinale()
+    cleanEnv()
 
 
 if __name__ == "__main__":
@@ -40,4 +40,4 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         console.err("You have stopped the program manually.")
-        executeFinale()
+        cleanEnv()
