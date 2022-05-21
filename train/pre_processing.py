@@ -99,12 +99,21 @@ def unifyColOrder(*dfs: pd.DataFrame, order_list: list[str] = None) -> None:
                               value=dfs[i].pop(col_name))
                 count += 1
 
-# Get the
-
+# Get the shared features among the input dataframes
+# Used in mlPredictValueMakeUp()
 
 def getSharedFeatures(*dfs: pd.DataFrame) -> list:
-
-    pass
+    if len(dfs) == 0: return None
+    if len(dfs) == 1: dfs[0].columns.to_list()
+    shared_features = []
+    # For every feature in the first data frame
+    for feature in dfs[0].columns.to_list():
+        # Not in every input dataset -> not a shared feature -> ignore
+        for df in dfs[1:]:
+            if not (feature in df.columns.to_list()): continue
+        # Is a shared feature -> accept
+        shared_features.append(feature)
+    return shared_features
 
 # Feature Selection Method
 # Select influential features from the columns of the dataframe
@@ -177,7 +186,23 @@ def averageValueMakeUp(df_src: pd.DataFrame, df_dist: pd.DataFrame, col_name, de
 
 
 def mlPredictValueMakeUp(df_src: pd.DataFrame, df_dist: pd.DataFrame, col_name, default_val=-1, insert_loc=-1):
+    if col_name in df_dist.columns.to_list(): return None
     # Get the shared features between the two datasets
+    shared_features = getSharedFeatures(df_src, df_dist)
+    # number of features > 10 -> feature selection
+    if len(shared_features) > 10:
+        df_src_shared = df_src[shared_features.append(col_name)]
+        shared_features = selectFeatures(df_src_shared, labelColName=col_name)
+    # Train prediction model to generate values
+    x = df_src.loc[shared_features].values
+    y = df_src.loc[col_name].values
+    ###### Default Values ########
+    train_size = 0.8
+    test_size = 0.2
+    ##############################
+    x_train, x_test, y_train, y_test = train_test_split(
+        x, y, train_size=train_size, test_size=test_size, random_state=0, stratify=y
+    )
     pass
 
 # Feature Making up function
