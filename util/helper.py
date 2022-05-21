@@ -43,7 +43,7 @@ def cleanEnv() -> None:
     console.clear()
 
     # Ask if remove kaggle command line tool
-    if input("Do you want to remove kaggle command line tool (type \"yes\" to uninstall)? ") == "yes":
+    if input("Do you want to remove kaggle command line tool (type \"yes\" to uninstall, enter=no)? ") == "yes":
         __uninstallKaggle()
 
     # Restore backup file if not uninstall and it exist

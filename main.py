@@ -20,7 +20,7 @@ def main():
     model_2015 = getModel(
         "./datasets/data_2015.csv", "HeartDiseaseorAttack",
         use_CPU=True, layers=[KerasDenseLayer(10, activation="relu")],
-        fit_epoch=1
+        fit_epoch=10
     )
     model_2015_result = testModel(model_2015, use_CPU=True)
 
@@ -32,7 +32,7 @@ def main():
         df_2020, "HeartDisease",
         use_CPU=True, descr_convert=getClassToDigitDict(),
         layers=[KerasDenseLayer(10, activation="relu")],
-        fit_epoch=1
+        fit_epoch=10
     )
     model_2020_result = testModel(model_2020, use_CPU=True)
 

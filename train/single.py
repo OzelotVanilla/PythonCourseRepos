@@ -30,7 +30,8 @@ def getModel(dataset_path_or_dataframe: str | DataFrame, target_column_name: str
             target_column_name
         )
     elif path_type == DataFrame:
-        console.info("Prepare to read using pandas' dataframe \"" + dataset_path_or_dataframe.__repr__() + "\".")
+        console.info("Prepare to read using pandas' dataframe:\n")
+        print(dataset_path_or_dataframe.head())
         result_column, data_column = splitOneColumn(
             dataset_path_or_dataframe,
             target_column_name

@@ -1,8 +1,8 @@
+from util.console import console
+
 from enum import Enum
 import matplotlib.pyplot as plt
-import matplotlib.image as imgplt
 
-from util.console import console
 
 # Use pyplot.show to show all figures
 
@@ -24,10 +24,13 @@ class PyplotDiagram:
         self.plot_type = PyplotDiagram.PlotType.pending
 
     def addAsSeries(self, data: dict[str, dict[str, float]], /,
-                    width: float = 0.2, interval: float = 0.2, show_legend: bool = True) -> None:
+                    width: float = 0.2, interval: float = 0.2,
+                    show_value: bool = True, show_legend: bool = True) -> None:
         # data should be like: {"2015": {"a": 1, "b": 2}, "2020": {"a": 4, "b": 5}}
         if not self.__checkIfAbleToAdd():
-            console.warn("Failed to do addAsSeries because there was already data")
+            self.__showFailToAddMessage()
+            return
+
         plt.figure(self.id)
 
         # Add data to the set
@@ -40,17 +43,26 @@ class PyplotDiagram:
         # Each time, draw in data like "2015": {"a": 1, "b": 2}
         nth_data = 0
         for data_name in data_names:
+            # For each data, to keep in same legend, draw them at once
             bar_position = [
                 nth_data * width + (len(data_names) * width + interval) * i for i in range(len(data_labels))
             ]
+            # If there is no data can be queried, use 0 as default
+            values = [data[data_name].get(label, 0) for label in data_labels]
             plt.bar(
                 bar_position,
-                [data[data_name].get(label, 0) for label in data_labels],
+                values,
                 width=width,
                 align="edge",
                 label=data_name
             )
             nth_data += 1
+
+            # Show the value of bar
+            if show_value:
+                for x, y in zip(bar_position, values):
+                    plt.text(x + width / 2, y, f"{y:.4}", ha="center", va="bottom")
+
         del nth_data
 
         # Draw series labels
@@ -66,11 +78,18 @@ class PyplotDiagram:
         plt.figure(self.id)
         plt.title(title)
 
+    def clear(self):
+        plt.figure(self.id)
+        plt.clf()
+        self.plot_type = PyplotDiagram.PlotType.pending
+
     def showAllPlot():
         plt.show()
 
-    def __checkIfAbleToAdd(self): return self.plot_type == self.PlotType.pending
+    def __checkIfAbleToAdd(self): return self.plot_type == PyplotDiagram.PlotType.pending
 
-    def __showFailToAddMessage(): pass
-
-    def __failToAdd(): pass
+    def __showFailToAddMessage(self):
+        console.warn(
+            "The plot No.", self.count_num, " failed to add diagram because it already has.",
+            "Use \"clear\" method to clear the figure first, then add new diagram."
+        )
