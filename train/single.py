@@ -8,13 +8,14 @@ from keras.engine.base_layer import Layer as KerasLayer
 from keras.engine.sequential import Sequential as KerasSeqModel
 from keras.layers import Dense as KerasDenseLayer
 from keras.callbacks import EarlyStopping as KerasEarlyStop
+import pandas as pd
 from pandas import DataFrame
 
 
 # This file contains training according to single file
 
 
-def getModel(dataset_path_or_dataframe: str | DataFrame, tartget_column_name: str,
+def getModel(dataset_path_or_dataframe: str | DataFrame, target_column_name: str,
              /, use_CPU: bool = False, descr_convert: dict[str, dict[str, int]] = None,
              layers: list[KerasLayer] = [KerasDenseLayer(10, activation="relu")] * 3,
              compile_optimizer: str = "adam", compile_loss_function="mean_squared_error",
@@ -26,13 +27,13 @@ def getModel(dataset_path_or_dataframe: str | DataFrame, tartget_column_name: st
         console.info("Prepare to read from file \"" + dataset_path_or_dataframe + "\".")
         result_column, data_column = splitOneColumn(
             readCSV(dataset_path_or_dataframe, descr_convert=descr_convert),
-            tartget_column_name
+            target_column_name
         )
     elif path_type == DataFrame:
         console.info("Prepare to read using pandas' dataframe \"" + dataset_path_or_dataframe.__repr__() + "\".")
         result_column, data_column = splitOneColumn(
             dataset_path_or_dataframe,
-            tartget_column_name
+            target_column_name
         )
     else:
         console.err(
@@ -44,21 +45,21 @@ def getModel(dataset_path_or_dataframe: str | DataFrame, tartget_column_name: st
     # Read and separate whole dataframe to data column and result column
 
     # Summon the model
-    model = KerasSeqModel(layers)
     console.info(
-        "Ready to train model predicting \"" + tartget_column_name + "\"."
+        "Ready to train model predicting \"" + target_column_name + "\"."
     )
 
-    # Choose use CPU or GPU
-    with tensorflow.device("/cpu:0" if use_CPU else getBestGPUTensorFlow()):
-        model.compile(optimizer=compile_optimizer, loss=compile_loss_function, metrics=compile_metrics)
-        model.fit(data_column, result_column, validation_split=0.2, callbacks=fit_callbacks, epochs=fit_epoch)
-
-    # Return the model
-    console.info(
-        "Successfully trained model predicting \"" + tartget_column_name + "\"."
+    model = summonModel(
+        result_column, data_column, layers, use_CPU=use_CPU, compile_optimizer=compile_optimizer,
+        compile_loss_function=compile_loss_function, compile_metrics=compile_metrics, fit_callbacks=fit_callbacks,
+        fit_epoch=fit_epoch
     )
-    return TrainedModel(model, result_column, data_column)
+
+    console.info(
+        "Successfully trained model predicting \"" + target_column_name + "\"."
+    )
+
+    return model
 
 
 # Return at least the loss of a model in list
@@ -79,4 +80,49 @@ def testModel(model: TrainedModel, /, use_CPU: bool = False) -> dict[str, object
     for (key, value) in zip(model.metrics_names, eval_result):
         print("\t" + str(key) + ":", value)
         result[key] = value
+
+    console.wait(2)
     return result
+
+
+def getModelByXYColumn(result_column: pd.Series, data_column: pd.DataFrame,
+                       /, use_CPU: bool = False, descr_convert: dict[str, dict[str, int]] = None,
+                       layers: list[KerasLayer] = [KerasDenseLayer(10, activation="relu")] * 3,
+                       compile_optimizer: str = "adam", compile_loss_function="mean_squared_error",
+                       compile_metrics=["accuracy"],
+                       fit_callbacks=[KerasEarlyStop(patience=3)], fit_epoch: int = 1) -> TrainedModel:
+    console.clear()
+    console.info(
+        "Ready to train model predicting \"" + result_column.name + "\"."
+    )
+
+    model = summonModel(
+        result_column, data_column, layers, use_CPU=use_CPU, compile_optimizer=compile_optimizer,
+        compile_loss_function=compile_loss_function, compile_metrics=compile_metrics, fit_callbacks=fit_callbacks,
+        fit_epoch=fit_epoch
+    )
+
+    console.info(
+        "Successfully trained model predicting \"" + result_column.name + "\"."
+    )
+    console.wait(4)
+
+    return model
+
+
+def summonModel(result_column, data_column, layers: list[KerasLayer] = [KerasDenseLayer(10, activation="relu")] * 3,
+                /, use_CPU: bool = False,
+                compile_optimizer: str = "adam", compile_loss_function="mean_squared_error",
+                compile_metrics=["accuracy"],
+                fit_callbacks=[KerasEarlyStop(patience=3)], fit_epoch: int = 1) -> TrainedModel:
+
+    # Summon the model
+    model = KerasSeqModel(layers)
+
+    # Choose use CPU or GPU
+    with tensorflow.device("/cpu:0" if use_CPU else getBestGPUTensorFlow()):
+        model.compile(optimizer=compile_optimizer, loss=compile_loss_function, metrics=compile_metrics)
+        model.fit(data_column, result_column, validation_split=0.2, callbacks=fit_callbacks, epochs=fit_epoch)
+
+    # Return the model
+    return TrainedModel(model, result_column, data_column)
