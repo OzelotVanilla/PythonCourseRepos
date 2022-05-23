@@ -15,7 +15,7 @@ from pandas import DataFrame
 # This file contains training according to single file
 
 
-def getModel(dataset_path_or_dataframe: str | DataFrame, target_column_name: str,
+def getModel(dataset_path_or_dataframe, target_column_name: str,
              /, use_CPU: bool = False, descr_convert: dict[str, dict[str, int]] = None,
              layers: list[KerasLayer] = [KerasDenseLayer(10, activation="relu")] * 3,
              compile_optimizer: str = "adam", compile_loss_function="mean_squared_error",

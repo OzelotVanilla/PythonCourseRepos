@@ -15,13 +15,13 @@ def prepareEnv() -> None:
     __checkIfRequiredModuleInstalled()
 
     # Download required util from GitHub
-    __downloadFromWebRaw([
-        {
-            "url": "https://raw.githubusercontent.com/SantiagoEG/FCBF_module/master/FCBF_module.py",
-            "path": "lib/",
-            "name": "FCBF_module.py"
-        }
-    ])
+    # __downloadFromWebRaw([
+    #     {
+    #         "url": "https://raw.githubusercontent.com/SantiagoEG/FCBF_module/master/FCBF_module.py",
+    #         "path": "lib/",
+    #         "name": "FCBF_module.py"
+    #     }
+    # ])
 
     # Install and configure Kaggle command line tool
     __installKaggleCommandLineTool()

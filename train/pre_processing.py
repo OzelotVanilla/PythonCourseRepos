@@ -36,11 +36,11 @@ def getClassToDigitDict() -> dict[str, dict[str, int]]:
             "SkinCancer": {"Yes": 1, "No": 0}}
 
 
-def classToDigitReplace(dataframe: pd.DataFrame, replace_dict: dict[str, dict[str, int]]):
+def classToDigitReplace(df: pd.DataFrame, replace_dict: dict[str, dict[str, int]] = getClassToDigitDict()):
     console.info("Converting descriptive data to numbers:")
     for key in replace_dict:
         print("\t", key + ":", replace_dict[key])
-    dataframe.replace(replace_dict, inplace=True)
+    df.replace(replace_dict, inplace=True)
     console.info("Replaced required data.")
 
 
@@ -203,6 +203,7 @@ def mlPredictValueMakeUp(df_src: pd.DataFrame, df_dist: pd.DataFrame, col_name, 
     x_train, x_test, y_train, y_test = train_test_split(
         x, y, train_size=train_size, test_size=test_size, random_state=0, stratify=y
     )
+    # TODO
     pass
 
 # Feature Making up function
