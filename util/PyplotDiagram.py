@@ -4,6 +4,8 @@ from enum import Enum
 import matplotlib.pyplot as plt
 
 
+class PyplotDiagram:
+    ...
 # Use pyplot.show to show all figures
 
 
@@ -25,7 +27,7 @@ class PyplotDiagram:
 
     def addAsSeries(self, data: dict[str, dict[str, float]], /,
                     width: float = 0.2, interval: float = 0.2,
-                    show_value: bool = True, show_legend: bool = True) -> None:
+                    show_value: bool = True, show_legend: bool = True) -> PyplotDiagram:
         # data should be like: {"2015": {"a": 1, "b": 2}, "2020": {"a": 4, "b": 5}}
         if not self.__checkIfAbleToAdd():
             self.__showFailToAddMessage()
@@ -50,11 +52,8 @@ class PyplotDiagram:
             # If there is no data can be queried, use 0 as default
             values = [data[data_name].get(label, 0) for label in data_labels]
             plt.bar(
-                bar_position,
-                values,
-                width=width,
-                align="edge",
-                label=data_name
+                bar_position, values,
+                width=width, align="edge", label=data_name
             )
             nth_data += 1
 
@@ -74,14 +73,18 @@ class PyplotDiagram:
         # Show legend if required
         plt.legend(loc="upper left") if show_legend else None
 
-    def addTitle(self, title: str, /, ):
+        return self
+
+    def setTitle(self, title: str, /, ) -> PyplotDiagram:
         plt.figure(self.id)
         plt.title(title)
+        return self
 
-    def clear(self):
+    def clear(self) -> PyplotDiagram:
         plt.figure(self.id)
         plt.clf()
         self.plot_type = PyplotDiagram.PlotType.pending
+        return self
 
     def showAllPlot():
         plt.show()
@@ -90,6 +93,6 @@ class PyplotDiagram:
 
     def __showFailToAddMessage(self):
         console.warn(
-            "The plot No.", self.count_num, " failed to add diagram because it already has.",
+            "The plot No.", self.count_num, "failed to add diagram because it already has.",
             "Use \"clear\" method to clear the figure first, then add new diagram."
         )
