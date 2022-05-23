@@ -36,10 +36,11 @@ def getClassToDigitDict() -> dict[str, dict[str, int]]:
             "SkinCancer": {"Yes": 1, "No": 0}}
 
 
-def classToDigitReplace(df: pd.DataFrame, replace_dict: dict[str, dict[str, int]] = getClassToDigitDict()):
+def classToDigitReplace(df: pd.DataFrame, replace_dict: dict[str, dict[str, int]] = getClassToDigitDict(), verbose=True):
     console.info("Converting descriptive data to numbers:")
-    for key in replace_dict:
-        print("\t", key + ":", replace_dict[key])
+    if verbose: 
+        for key in replace_dict: 
+            print("\t", key + ":", replace_dict[key]) 
     df.replace(replace_dict, inplace=True)
     console.info("Replaced required data.")
 
