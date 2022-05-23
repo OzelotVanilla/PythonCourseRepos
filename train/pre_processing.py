@@ -7,6 +7,11 @@ import pandas.api as pdapi
 import numpy as np
 from sklearn.feature_selection import mutual_info_classif
 from sklearn.model_selection import train_test_split
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.callbacks import EarlyStopping
+from tensorflow.keras.utils import to_categorical
+import os
 # from FCBF_module import FCBFK
 
 
@@ -109,11 +114,14 @@ def getSharedFeatures(*dfs: pd.DataFrame) -> list:
     shared_features = []
     # For every feature in the first data frame
     for feature in dfs[0].columns.to_list():
+        flag = True
         # Not in every input dataset -> not a shared feature -> ignore
         for df in dfs[1:]:
-            if not (feature in df.columns.to_list()): continue
+            if not (feature in df.columns.to_list()): 
+                flag = False
+                break
         # Is a shared feature -> accept
-        shared_features.append(feature)
+        if flag: shared_features.append(feature)
     return shared_features
 
 # Feature Selection Method
@@ -160,11 +168,20 @@ def selectFeatures(df: pd.DataFrame, train_size=0.8, threshold=0.9, labelColName
     return selected_features
 
 
+def twoDimPredictionToCategory(prediction: np.ndarray):
+    # Create the output array
+    result = np.ndarray(shape=(prediction.shape[0]))
+    # Get the index of the highest probability for each single prediction
+    # Append the category (index) to result array
+    for i in range(prediction.shape[0]):
+        result[i] = prediction[i]
+
+
 # Make up for missing features (***MakeUp)
 
 # Use Default Value
 
-def defaultValueMakeUp(df_src: pd.DataFrame, df_dist: pd.DataFrame, col_name, default_val=-1, insert_loc=-1):
+def defaultValueMakeUp(df_src: pd.DataFrame, df_dist: pd.DataFrame, col_name, default_val=-1, insert_loc=-1, output_dir=None):
     # Column exists -> do nothing
     if col_name in df_dist.columns.to_list():
         return None
@@ -174,7 +191,7 @@ def defaultValueMakeUp(df_src: pd.DataFrame, df_dist: pd.DataFrame, col_name, de
 # Use Average Value
 
 
-def averageValueMakeUp(df_src: pd.DataFrame, df_dist: pd.DataFrame, col_name, default_val=-1, insert_loc=-1):
+def averageValueMakeUp(df_src: pd.DataFrame, df_dist: pd.DataFrame, col_name, default_val=-1, insert_loc=-1, output_dir=None):
     # Because all features to make up for are digits that represent certain classifications
     # The average value is the most frequent appearing digit
     average = df_src[col_name].value_counts().index[0]
@@ -182,36 +199,66 @@ def averageValueMakeUp(df_src: pd.DataFrame, df_dist: pd.DataFrame, col_name, de
     defaultValueMakeUp(df_src, df_dist, col_name,
                        default_val=average, insert_loc=insert_loc)
 
+
 # Use ML model to predict the missing values
-# according to the shared features between the two datasets
+# according to the shared features between the two 
+# The function will save used model in output_dir='models/mlModelPredictionMakeUp' if possible
 
 
-def mlPredictValueMakeUp(df_src: pd.DataFrame, df_dist: pd.DataFrame, col_name, default_val=-1, insert_loc=-1):
+def mlPredictValueMakeUp(df_src: pd.DataFrame, df_dist: pd.DataFrame, col_name, default_val=-1, insert_loc=-1, labelCol='HeartDisease', output_dir='models/mlModelPredictionMakeUp', enable_fs=False):
     if col_name in df_dist.columns.to_list(): return None
     # Get the shared features between the two datasets
     shared_features = getSharedFeatures(df_src, df_dist)
+    if labelCol in shared_features: shared_features.remove(labelCol)
     # number of features > 10 -> feature selection
-    if len(shared_features) > 10:
-        df_src_shared = df_src[shared_features.append(col_name)]
-        shared_features = selectFeatures(df_src_shared, labelColName=col_name)
+    if enable_fs and len(shared_features) > 10:
+        shared_features.append(col_name)
+        df_src_shared = df_src[shared_features]
+        shared_features = selectFeatures(df_src_shared, labelColName=col_name) 
+    # Get the number of categories of the wanted feature
+    categorties_num = len(df_src[col_name].value_counts())
     # Train prediction model to generate values
-    x = df_src.loc[shared_features].values
-    y = df_src.loc[col_name].values
+    x = df_src[shared_features].values
+    y = df_src[col_name].values
     ###### Default Values ########
-    train_size = 0.8
-    test_size = 0.2
+    train_size = 0.2
+    test_size = 0.05
     ##############################
     x_train, x_test, y_train, y_test = train_test_split(
         x, y, train_size=train_size, test_size=test_size, random_state=0, stratify=y
     )
-    # TODO
-    pass
+    # One_hot Encoding
+    y_train = to_categorical(y_train)
+    y_test = to_categorical(y_test)
+    # Build a model
+    model = Sequential()
+    # Use a universal model build
+    # Add layers to model, 1 input layer, 1 hidden layer and 1 output layer
+    model.add(Dense(16, activation='relu', input_dim=len(shared_features)))
+    model.add(Dense(16, activation='relu'))
+    model.add(Dense(y_train.shape[1], activation='softmax'))
+    # Compile model using accuracy to measure model performance
+    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+    # Train the model on df_src
+    print("Training model to predict {}".format(col_name))
+    # early_stopping_callback = EarlyStopping(monitor='val_accuracy', patience=2, verbose=1)
+    model.fit(x_train, y_train, epochs=2, validation_data=(x_test, y_test))
+    # Save the model
+    if os.path.exists(output_dir) and os.path.isdir(output_dir): model.save('{}/model_predict_{}.h5'.format(output_dir, col_name))
+    # Predict the missing values according to the shared features
+    prediction = model.predict(df_dist[shared_features])
+    # Fill the missing feature with the predicted values
+    # Convert the seperate probabilities to categories
+    prediction = np.argmax(prediction, axis=1)
+    print("Writing predicted values of {} to dataframe".format(col_name))
+    df_dist.insert(loc=insert_loc, column=col_name, value=prediction)
+
 
 # Feature Making up function
 # use the specific makeUpFunc to create values
 
 
-def makeUpAllMissingValue(df_src: pd.DataFrame, df_dist: pd.DataFrame, makeUpFunc=defaultValueMakeUp, default_val=-1):
+def makeUpAllMissingValue(df_src: pd.DataFrame, df_dist: pd.DataFrame, makeUpFunc=defaultValueMakeUp, default_val=-1, output_dir='datasets/makedUpDatasets/mlModelPredictionMakeUp'):
     # Unify Column Order
     unifyColOrder(df_src, df_dist)
     # Get column names from df_src
@@ -220,8 +267,7 @@ def makeUpAllMissingValue(df_src: pd.DataFrame, df_dist: pd.DataFrame, makeUpFun
     for i in range(len(col_names)):
         if not (col_names[i] in df_dist.columns):
             makeUpFunc(df_src=df_src, df_dist=df_dist,
-                       col_name=col_names[i], default_val=default_val, insert_loc=i)
-            # df_dist.insert(loc=i, column=col_names[i], value=default_val)
+                       col_name=col_names[i], default_val=default_val, insert_loc=i, output_dir=output_dir)
 
 
 # Test code
