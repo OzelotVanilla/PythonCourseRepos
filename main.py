@@ -38,7 +38,9 @@ def main():
 
     # Draw the plot of loss and accuracy
     diagram = PyplotDiagram()
-    diagram.addAsSeries({"Original 2015 Model": model_2015_result, "Original 2020 Model": model_2020_result})
+    diagram.addAsSeries(
+        {"Original 2015 Model": model_2015_result, "Original 2020 Model": model_2020_result}
+    ).setTitle("Trained Result")
     PyplotDiagram.showAllPlot()
 
     # This function do the clean-up and finishing job
