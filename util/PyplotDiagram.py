@@ -87,6 +87,7 @@ class PyplotDiagram:
         return self
 
     def showAllPlot():
+        console.info("Showing figures, close figures window to continue on program.")
         plt.show()
 
     def __checkIfAbleToAdd(self): return self.plot_type == PyplotDiagram.PlotType.pending

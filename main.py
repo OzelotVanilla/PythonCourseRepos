@@ -36,11 +36,11 @@ def main():
     )
     model_2020_result = testModel(model_2020, use_CPU=True)
 
-    # Draw the plot of loss and accuracy
+    # Draw the plot of loss and accuracy of each model
     diagram = PyplotDiagram()
     diagram.addAsSeries(
         {"Original 2015 Model": model_2015_result, "Original 2020 Model": model_2020_result}
-    ).setTitle("Trained Result")
+    ).setTitle("Datasets Trained Result")
     PyplotDiagram.showAllPlot()
 
     # This function do the clean-up and finishing job
