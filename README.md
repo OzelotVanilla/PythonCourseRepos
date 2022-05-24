@@ -4,9 +4,9 @@ Only for class use.
 
 ## Before running
 
-1. Download the entire project to a folder
+1. Download the entire project to a folder (Recommended: Clone the project from GitHub)
 2. **IMPORTANT** use VSCode to **open that folder**,
-   ensure that the `main.py` is in the root directory after
+   ensure that the `main.py` and `Project_Interactive_Demo.ipynb` is in the root directory after
    opening the folder.
 3. Check if the required package is installed.
    If not, please see error message, and install them
@@ -17,10 +17,10 @@ Only for class use.
    * pandas
    * scikit-learn
    * matplotlib
-4. Also, make sure your Python version is greater or equal to 3.10.
+4. Also, make sure your Python version is greater or equal to 3.9.
    Because Python is interpret code files, some notations will be considered as error,
    but actually they are not error.
-5. Make sure the VSCode terminal can access to the internet.
+5. Make sure the VSCode terminal can access to the internet. (For automatic dataset downloads)
 
 ## Program Interaction Range
 
@@ -61,16 +61,17 @@ The main value of filling data will be:
 
 ## Content
 
-`datasets` folder: save training datasets. Will be created during running the program.
+`datasets` directory: save training datasets. Will be created during running the program.
 
-`lib` folder: useful tools **from others**.
+`lib` directory: useful tools **from others**.
 
-`train` folder: for training models.
+`train` directory: for training models.
 
-`util` folder: tools that help programming.
+`util` directory: tools that help programming.
 
 `main.py` file: the entry for the project.
 
+`Project_Interactive_Demo.ipynb` file: the interactive version of the project with explanation
 ## Other Information
 
 For the format, we use autopep8 to manage it.
