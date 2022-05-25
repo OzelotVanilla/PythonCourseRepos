@@ -110,11 +110,17 @@ def main():
     )
     model_2020_result = testModel(model_2020, use_CPU=True)
 
+    # Try to use previous model by filling up missing value
+    df_2015 = readCSV("./datasets/data_2015.csv")
+
+    # Do feature selection to choose the 90% most important columns
+    df_2015_selected = getFeatureSelectedDataFrame(df_2015, "HeartDisease", 0.9)
+
     # Draw the plot of loss and accuracy of each model
     diagram = PyplotDiagram()
-    diagram.drawSeries(
-        {"Original 2015 Model": result_2015, "Original 2020 Model": model_2020_result}
-    ).setTitle("Datasets Trained Result")
+    diagram.addAsSeriess(
+        {"Original 2015 Model": model_2015_result, "Original 2020 Model": model_2020_result}
+    ).drawSeries().setTitle("Datasets Trained Result")
     PyplotDiagram.showAllPlot()
 
     # This function do the clean-up and finishing job

@@ -1,5 +1,7 @@
+import operator
 import os
 import time
+from functools import reduce
 
 
 class console:
@@ -32,8 +34,7 @@ class console:
     def __getColorANSICodeFromHexRGB(color_rgb: str) -> str:
         if color_rgb[0] == "#":
             color_rgb = color_rgb[1:]
-        color_decimal = [";" + str(int(color_rgb[i:i + 2], base=16)) for i in [0, 2, 4]]
-        color_code = "\033[38;2"
-        for c in color_decimal:
-            color_code = color_code + c
-        return color_code + "m"
+
+        return "\033[38;2" + reduce(
+            operator.add, [";" + str(int(color_rgb[i:i + 2], base=16)) for i in [0, 2, 4]]
+        ) + "m"

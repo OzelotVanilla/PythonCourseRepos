@@ -126,6 +126,14 @@ def getSharedFeatures(*dfs: pd.DataFrame) -> list:
             shared_features.append(feature)
     return shared_features
 
+
+def getFeatureSelectedDataFrame(from_df: pd.DataFrame, result_col_name: str, select_percentage: float) -> pd.DataFrame:
+    console.info(f"Selecting features at {select_percentage}%.")
+    print("\tColumns before:", from_df.columns.values)
+    features_selected = selectFeatures(from_df, result_col_name=result_col_name, threshold=select_percentage)
+    console.info(f"Selected {len(features_selected)} feature")
+    pass
+
 # Feature Selection Method
 # Select influential features from the columns of the dataframe
 
