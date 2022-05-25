@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.callbacks import EarlyStopping
-from keras.utils import to_categorical
+from keras.utils.np_utils import to_categorical
 import os
 # from FCBF_module import FCBFK
 
