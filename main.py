@@ -185,8 +185,68 @@ def main():
     console.info('Maked Up Dataset Performance Test: Complete')
     console.wait(5)
     console.clear()
+
+    ### Train a new model for the 2020 dataset ########################################################################
+
+    console.info('Model Training 2020: Start')
+
+    # Feature Selection
+    # Select the most influential features (first 90%) to the target value
+    console.info('Model Training 2020: 1. Feature Selection (30-40s)')
+    # Uses the mutual_info_classif method provided by Keras, which is encapsulated in the selectFeatures method (self-implemented)
+    features_selected = selectFeatures(df_2020, labelColName="HeartDisease", threshold=0.9)
+    print("{} features selected".format(len(features_selected)))
+    print(features_selected)
+    console.wait(3)
+    # df_2020_fs: the 2020 dataset containing only the selected features
+    df_2020_fs = df_2020[features_selected]
+    # Save the dataset with only selected features
+    df_2020_fs.to_csv('datasets/data_2020_fs.csv', index=False)
+    console.info('Model Training 2020: 1. data_2020 with only selected features was saved to model dir')
+    
+    # Train the model according to 2020 data
+    console.info('Model Training 2020: 2. Train binary-classification model for the 2020 dataset')
+    # Split train and test set
+    x = df_2020_fs.values
+    y = df_2020["HeartDisease"].values
+    x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, test_size=0.2, random_state=0)
+    # Prepare layer set
+    # Input Layer: Dense 16 relu
+    # Hidden Layer: Dense 64 relu
+    # Hidden Layer: Dense 32 relu
+    # Output Layer: Dense 1 sigmoid
+    layers = [
+        KerasDenseLayer(16, activation="relu", input_dim=len(features_selected)),  # Input Layer (input_dim=11)
+        KerasDenseLayer(64, activation="relu"),                                 # Hidden Layer #1
+        KerasDenseLayer(32, activation="relu"),                                 # Hidden Layer #2
+        KerasDenseLayer(1, activation="sigmoid")                                # Output Layer
+    ]
+    # From the experiment, 3 epoches is found to be the best trainning configuration
+    # On such small dataset use CPU to compute usually have higher efficiency
+    # Check Project_Interactive_Demo.ipynb for more information about this configureation 
+    # (Train a model for the 2020 dataset/Test Trainning: Find the best configuration)
+    model_2020 = getModelByXYColumn(
+        y_train, x_train,
+        use_CPU=True, layers=layers,
+        fit_epoch=3, compile_loss_function='binary_crossentropy', 
+        fit_callbacks=[], validation_split=0
+    )
+    
+    # Evaluate the trained model
+    console.info('Model Training 2020: 3. Evaluate the trained model')
+    result_2020 = testModel(model_2020, y_test, x_test, use_CPU=True)
+    
+    # Save the trained model
+    console.info('Model Training 2020: 4. Saving the trained model')
+    model_2020.model.save('models/model_2020.h5')
+
+    console.info('Model Training 2020: Complete')
+    console.wait(5)
+    console.clear()
+
+    ### Result Analysis (ploting) #####################################################################################
     exit(0)
-    ### Test performance of the maked up data #########################################################################
+
     # Train the model according to 2020 data
     df_2020 = readCSV("./datasets/data_2020.csv")
     unifyColNames(df_2020)
