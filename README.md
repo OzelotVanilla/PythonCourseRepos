@@ -118,7 +118,7 @@ The following listed some differences between them:
 * Functional code in `main.py` is extensively encapsulated in self-defined methods for programming convenience. Code in `Project_Interactive_Demo.ipynb` is relatively easy to understand as it uses more standard APIs. 
 * `main.py` is a regular python file that can be directly run in command line or VSCode. `Project_Interactive_Demo.ipynb` is a jupyter notebook file which needes `jupyter` package to open. It is recommended to install the `Jupyter` extension and open the notebook in VSCode, which will guide you to configure the jupyter environment.
 ### Which one to choose?  
-Both `main.py` and `Project_Interactive_Demo.ipynb` are available entrance of the project program. However, directly running the `Project_Interactive_Demo.ipynb` requires the user to manually download the datasets (if not indluded).
+Both `main.py` and `Project_Interactive_Demo.ipynb` are available entrance of the project program. However, directly running the `Project_Interactive_Demo.ipynb` requires the user to manually download the datasets (if not included).
 ### Recommended Order
 It is recommended to **firstly** run `main.py` to download the datasets and generate the intermediate products, which will be saved in files, **then** use the `Project_Iteractive_Demo.ipynb` to evalute the program using check points to qickly resume the progress from the intermediate files.
 ## Other Information
