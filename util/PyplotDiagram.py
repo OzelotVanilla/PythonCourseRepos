@@ -58,7 +58,7 @@ class PyplotDiagram:
 
     def drawSeries(self, /,
                    width: float = 0.2, interval: float = 0.2,
-                   show_value: bool = True, show_legend: bool = True) -> PyplotDiagram:
+                   show_value: bool = True, show_legend: bool = True, show_double_axis: bool = False) -> PyplotDiagram:
 
         plt.figure(self.id)
 
@@ -98,6 +98,11 @@ class PyplotDiagram:
             [len(data_names) * width / 2 + (len(data_names) * width + interval) * i for i in range(len(data_labels))],
             data_labels
         )
+
+        # Show double axis
+        if show_double_axis:
+            left_axis = plt.gca()
+            left_axis.twinx().set_yticks(left_axis.get_yticks())
 
         # Show legend if required
         plt.legend(loc="upper left") if show_legend else None

@@ -67,8 +67,10 @@ def getModel(dataset_path_or_dataframe, target_column_name: str,
 def testModel(model: TrainedModel, test_result_column=None, test_data_column=None, /, use_CPU: bool = False) -> dict[str, object]:
     console.info("Testing model...")
     # No test reference input -> use the train set to test
-    if (test_result_column is None): test_result_column = model.result_column
-    if (test_data_column is None): test_data_column = model.data_column
+    if (test_result_column is None):
+        test_result_column = model.result_column
+    if (test_data_column is None):
+        test_data_column = model.data_column
 
     # Choose use CPU or GPU
     model = model.model
@@ -80,7 +82,7 @@ def testModel(model: TrainedModel, test_result_column=None, test_data_column=Non
     # Check if returned value is not list, change to list for zip function
     if type(eval_result) != type([]):
         eval_result = [eval_result]
-    console.info("Model trained, these information available:")
+    console.info("Model tested, these information available:")
     # Save output to dict
     result = dict()
     for (key, value) in zip(model.metrics_names, eval_result):
@@ -129,7 +131,8 @@ def summonModel(result_column, data_column, layers: list[KerasLayer] = [KerasDen
     # Choose use CPU or GPU
     with tensorflow.device("/cpu:0" if use_CPU else getBestGPUTensorFlow()):
         model.compile(optimizer=compile_optimizer, loss=compile_loss_function, metrics=compile_metrics)
-        model.fit(data_column, result_column, validation_split=validation_split, callbacks=fit_callbacks, epochs=fit_epoch)
+        model.fit(data_column, result_column, validation_split=validation_split,
+                  callbacks=fit_callbacks, epochs=fit_epoch)
 
     # Return the model
     return TrainedModel(model, result_column, data_column)

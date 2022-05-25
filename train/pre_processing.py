@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.callbacks import EarlyStopping
-from tensorflow.keras.utils import to_categorical
+from keras.utils import to_categorical
 import os
 # from FCBF_module import FCBFK
 
@@ -157,7 +157,8 @@ def selectFeatures(df: pd.DataFrame, train_size=0.8, threshold=0.9, labelColName
 
     # Create pairs of importances and features
     f_list = sorted(
-        zip(map(lambda x: round(x, 4), importances), features), reverse=True)
+        zip(map(lambda x: round(x, 4), importances), features), reverse=True
+    )
 
     # Calculate the sum of importance scores
     sum_of_importance = 0
