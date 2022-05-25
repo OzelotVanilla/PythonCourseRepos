@@ -58,7 +58,7 @@ def getBestGPUTensorFlow() -> str:
         console.warn("Assigned to use GPU, but no GPU found by TensorFlow")
         return "/cpu:0"
     else:
-        return available_GPU_list[0].name
+        return "/gpu:0"
 
 
 def __checkIfRequiredModuleInstalled() -> None:

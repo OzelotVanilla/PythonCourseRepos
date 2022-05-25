@@ -20,7 +20,7 @@ def getModel(dataset_path_or_dataframe, target_column_name: str,
              layers: list[KerasLayer] = [KerasDenseLayer(10, activation="relu")] * 3,
              compile_optimizer: str = "adam", compile_loss_function="mean_squared_error",
              compile_metrics=["accuracy"],
-             fit_callbacks=[KerasEarlyStop(patience=3)], fit_epoch: int = 1) -> TrainedModel:
+             fit_callbacks=[KerasEarlyStop(patience=3)], fit_epoch: int = 1, validation_split=0.2) -> TrainedModel:
     console.clear()
     path_type = type(dataset_path_or_dataframe)
     if path_type == str:
@@ -53,7 +53,7 @@ def getModel(dataset_path_or_dataframe, target_column_name: str,
     model = summonModel(
         result_column, data_column, layers, use_CPU=use_CPU, compile_optimizer=compile_optimizer,
         compile_loss_function=compile_loss_function, compile_metrics=compile_metrics, fit_callbacks=fit_callbacks,
-        fit_epoch=fit_epoch
+        fit_epoch=fit_epoch, validation_split=validation_split
     )
 
     console.info(
@@ -97,7 +97,7 @@ def getModelByXYColumn(result_column, data_column,
                        layers: list[KerasLayer] = [KerasDenseLayer(10, activation="relu")] * 3,
                        compile_optimizer: str = "adam", compile_loss_function="mean_squared_error",
                        compile_metrics=["accuracy"],
-                       fit_callbacks=[KerasEarlyStop(patience=3)], fit_epoch: int = 1) -> TrainedModel:
+                       fit_callbacks=[KerasEarlyStop(patience=3)], fit_epoch: int = 1, validation_split=0.2) -> TrainedModel:
     console.clear()
     console.info(
         "Start model training."
@@ -106,7 +106,7 @@ def getModelByXYColumn(result_column, data_column,
     model = summonModel(
         result_column, data_column, layers, use_CPU=use_CPU, compile_optimizer=compile_optimizer,
         compile_loss_function=compile_loss_function, compile_metrics=compile_metrics, fit_callbacks=fit_callbacks,
-        fit_epoch=fit_epoch
+        fit_epoch=fit_epoch, validation_split=validation_split
     )
 
     console.info(
@@ -121,7 +121,7 @@ def summonModel(result_column, data_column, layers: list[KerasLayer] = [KerasDen
                 /, use_CPU: bool = False,
                 compile_optimizer: str = "adam", compile_loss_function="mean_squared_error",
                 compile_metrics=["accuracy"],
-                fit_callbacks=[KerasEarlyStop(patience=3)], fit_epoch: int = 1) -> TrainedModel:
+                fit_callbacks=[KerasEarlyStop(patience=3)], fit_epoch: int = 1, validation_split=0.2) -> TrainedModel:
 
     # Summon the model
     model = KerasSeqModel(layers)
@@ -129,7 +129,7 @@ def summonModel(result_column, data_column, layers: list[KerasLayer] = [KerasDen
     # Choose use CPU or GPU
     with tensorflow.device("/cpu:0" if use_CPU else getBestGPUTensorFlow()):
         model.compile(optimizer=compile_optimizer, loss=compile_loss_function, metrics=compile_metrics)
-        model.fit(data_column, result_column, validation_split=0.2, callbacks=fit_callbacks, epochs=fit_epoch)
+        model.fit(data_column, result_column, validation_split=validation_split, callbacks=fit_callbacks, epochs=fit_epoch)
 
     # Return the model
     return TrainedModel(model, result_column, data_column)
