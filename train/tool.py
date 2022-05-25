@@ -22,3 +22,6 @@ def splitOneColumn(dataframe: DataFrame, split_column_name: str) -> tuple[Series
     # Split the result column and other column
     # Return as (result, others)
     return (dataframe[split_column_name], dataframe.drop(columns=[split_column_name]))
+
+def getFeaturesAndLabel(df: DataFrame, features: list, label):
+    return (df[features].values, df[label].values)

@@ -2,8 +2,8 @@ from util.PyplotDiagram import PyplotDiagram
 from util.console import console
 from util.helper import prepareEnv, cleanEnv
 from train.single import *
-from train.single import TrainedModel
 from train.pre_processing import *
+from train.tool import getFeaturesAndLabel
 
 from keras.layers import Dense as KerasDenseLayer
 from pandas import read_csv as readCSV
@@ -140,14 +140,15 @@ def main():
     # with file names 'model_predict_<name of the missing feature>.h5
     #
     # Prepare the ML model output directory
-    if not os.path.exists('models/mlModelPredictionMakeUp'): os.mkdir('models/mlModelPredictionMakeUp')
+    output_dir='models/mlModelPredictionMakeUp'
+    if not os.path.exists(output_dir): os.mkdir(output_dir)
     #
     # In training the model for each missing features, a universal set of layers is used to train the models as the following shows:
     # - Input Layer: Dense 16 relu
     # - Hidden Layer: Dense 16 relu
     # - Output Layer: Dense * softmax (* may change when predicting different features) 
     df_2020_ml = df_2020.copy(deep=False)
-    makeUpAllMissingValue(df_src=df_2015, df_dist=df_2020_ml, makeUpFunc=mlPredictValueMakeUp, output_dir='models/mlModelPredictionMakeUp')
+    makeUpAllMissingValue(df_src=df_2015, df_dist=df_2020_ml, makeUpFunc=mlPredictValueMakeUp, output_dir=output_dir)
     # Save the maked up dataset
     console.info('Missing Values Making Up: 3. Saving dataset maked up with ML model prediction')
     df_2020_ml.to_csv('datasets/makedUpDatasets/data_2020_ml.csv', index=False)
@@ -156,8 +157,36 @@ def main():
     console.wait(5)
     console.clear()
 
-    ### Make up missing values in the 2020 dataset ####################################################################
+    ### Test performance of the maked up data #########################################################################
+    
+    console.info('Maked Up Dataset Performance Test: Start')
+
+    # Default Value Filling Method
+    console.info('Maked Up Dataset Performance Test: 1. Default Value Filling Method')
+    # Split features and label
+    x, y = getFeaturesAndLabel(df_2020_default, features_selected, 'HeartDisease')
+    # Evaluate the performance of the maked up data
+    result_default = testModel(model_2015, y, x, use_CPU=True)
+
+    # Average Value Filling Method
+    console.info('Maked Up Dataset Performance Test: 2. Average Value Filling Method')
+    # Split features and label
+    x, y = getFeaturesAndLabel(df_2020_average, features_selected, 'HeartDisease')
+    # Evaluate the performance of the maked up data
+    result_average = testModel(model_2015, y, x, use_CPU=True)
+
+    # ML Model Prediction Method
+    console.info('Maked Up Dataset Performance Test: 3. ML Model Prediction Method')
+    # Split features and label
+    x, y = getFeaturesAndLabel(df_2020_ml, features_selected, 'HeartDisease')
+    # Evaluate the performance of the maked up data
+    result_ml = testModel(model_2015, y, x, use_CPU=True)
+
+    console.info('Maked Up Dataset Performance Test: Complete')
+    console.wait(5)
+    console.clear()
     exit(0)
+    ### Test performance of the maked up data #########################################################################
     # Train the model according to 2020 data
     df_2020 = readCSV("./datasets/data_2020.csv")
     unifyColNames(df_2020)

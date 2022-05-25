@@ -271,7 +271,7 @@ def mlPredictValueMakeUp(df_src: pd.DataFrame, df_dist: pd.DataFrame, col_name, 
 # use the specific makeUpFunc to create values
 
 
-def makeUpAllMissingValue(df_src: pd.DataFrame, df_dist: pd.DataFrame, makeUpFunc=defaultValueMakeUp, default_val=-1, output_dir='datasets/makedUpDatasets/mlModelPredictionMakeUp'):
+def makeUpAllMissingValue(df_src: pd.DataFrame, df_dist: pd.DataFrame, makeUpFunc=defaultValueMakeUp, default_val=-1, output_dir='.'):
     # Unify Column Order
     unifyColOrder(df_src, df_dist)
     # Get column names from df_src
