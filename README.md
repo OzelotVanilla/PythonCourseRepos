@@ -2,8 +2,6 @@
 
 A CPS 3320 Python Programming Course Project - Wenzhou-Kean University
 
-Only for class use.
-
 ## Before running
 
 1. Download the entire project to a folder (Recommended: Clone the project from GitHub)
@@ -63,7 +61,7 @@ The main value of filling data will be:
 
 ### Datasets
 The project uses two heart disease datasets from Kaggle  
-The datasets are excerpts of the annual DCD survey data. And each of them has more than `250k` of records
+The datasets are excerpts of the annual CDC survey data. And each of them has more than `250k` of records
 - [Heart Disease Health Indicators Dataset](https://www.kaggle.com/datasets/alexteboul/heart-disease-health-indicators-dataset) shows the data of year `2015`
     
     253680 records   22 columns
@@ -98,11 +96,11 @@ Using the normal entrence of the program `main.py` to run the project will autom
 
 `models` directory: save trained models. Will be created during running the program.
 
-`lib` directory: useful tools **from others**.
+~~`lib` directory: useful tools **from others**.~~
 
-`train` directory: for training models.
+`train` directory: self-defined python modules for training models.
 
-`util` directory: tools that help programming.
+`util` directory: self-defined tools that help programming.
 
 `main.py` file: the entry for the project.
 
@@ -123,5 +121,5 @@ Both `main.py` and `Project_Interactive_Demo.ipynb` are available entrance of th
 It is recommended to **firstly** run `main.py` to download the datasets and generate the intermediate products, which will be saved in files, **then** use the `Project_Iteractive_Demo.ipynb` to evalute the program using check points to qickly resume the progress from the intermediate files.
 ## Other Information
 
-For the code format, we use autopep8 to manage it.
+autopep8 was used as the format manager of the python files.
 
