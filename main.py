@@ -66,7 +66,7 @@ def main():
 
     # Draw the plot of loss and accuracy of each model
     diagram = PyplotDiagram()
-    diagram.addAsSeries(
+    diagram.drawSeries(
         {"Original 2015 Model": model_2015_result, "Original 2020 Model": model_2020_result}
     ).setTitle("Datasets Trained Result")
     PyplotDiagram.showAllPlot()

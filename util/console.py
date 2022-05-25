@@ -6,13 +6,16 @@ class console:
     # Helper class
 
     def info(*args, color_rgb="0094c8", sep="") -> None:
-        print(console.__getColorANSICodeFromHexRGB(color_rgb), "[INFO] ", *args, "\033[39m", sep=sep)
+        print(console.__getColorANSICodeFromHexRGB(color_rgb) + "[INFO] ", end="")
+        print(*args, "\033[39m", sep=sep)
 
     def warn(*args, color_rgb="fcc800", sep="") -> None:
-        print(console.__getColorANSICodeFromHexRGB(color_rgb), "[WARN] ", *args, "\033[39m", sep=sep)
+        print(console.__getColorANSICodeFromHexRGB(color_rgb) + "[WARN] ", end="")
+        print(*args, "\033[39m", sep=sep)
 
     def err(*args, color_rgb="ba2636", sep="") -> None:
-        print(console.__getColorANSICodeFromHexRGB(color_rgb), "[ERR!] ", *args, "\033[39m", sep=sep)
+        print(console.__getColorANSICodeFromHexRGB(color_rgb) + "[ERR!] ", end="")
+        print(*args, "\033[39m", sep=sep)
 
     def clear() -> None:
         print("\033c")
