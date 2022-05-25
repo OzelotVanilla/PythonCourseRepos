@@ -249,6 +249,8 @@ def main():
 
     ### Result Analysis (ploting) #####################################################################################
 
+    console.info('Result Analysis: Display the General Graph')
+
     # Draw the plot of loss and accuracy of each model
     diagram = PyplotDiagram()
     diagram.addAsSeries(
@@ -258,6 +260,8 @@ def main():
          "Filled with Average Value": model_2015_result_average}
     ).drawSeries().setTitle("Datasets Trained Result")
     PyplotDiagram.showAllPlot()
+
+    ### Environment Cleaning ##########################################################################################
 
     # This function do the clean-up and finishing job
     cleanEnv()
