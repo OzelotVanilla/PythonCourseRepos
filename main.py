@@ -19,7 +19,12 @@ def main():
     # Train the model according to 2015 data
     model_2015 = getModel(
         "./datasets/data_2015.csv", "HeartDiseaseorAttack",
-        use_CPU=True, layers=[KerasDenseLayer(10, activation="relu")],
+        use_CPU=True,
+        layers=[
+            KerasDenseLayer(16, activation="relu"),
+            KerasDenseLayer(16, activation="relu"),
+            KerasDenseLayer(1, activation="sigmoid")
+        ],
         fit_epoch=10
     )
     model_2015_result = testModel(model_2015, use_CPU=True)
@@ -38,7 +43,7 @@ def main():
 
     # Draw the plot of loss and accuracy of each model
     diagram = PyplotDiagram()
-    diagram.addAsSeries(
+    diagram.drawSeries(
         {"Original 2015 Model": model_2015_result, "Original 2020 Model": model_2020_result}
     ).setTitle("Datasets Trained Result")
     PyplotDiagram.showAllPlot()

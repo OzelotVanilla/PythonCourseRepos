@@ -14,9 +14,8 @@ class PyplotDiagram:
 
     class PlotType(Enum):
         pending = 0
-        function = 1
-        image = 2
-        xy_data = 3
+        series = 1
+        drawn = -1
     # self.plot_type = enum { image, function, xy_data, pending }
 
     def __init__(self):
@@ -25,17 +24,47 @@ class PyplotDiagram:
         PyplotDiagram.count_num += 1
         self.plot_type = PyplotDiagram.PlotType.pending
 
-    def addAsSeries(self, data: dict[str, dict[str, float]], /,
-                    width: float = 0.2, interval: float = 0.2,
-                    show_value: bool = True, show_legend: bool = True) -> PyplotDiagram:
+    def addAsSeries(self, data: dict[str, dict[str, float]],
+                    /, draw_now: bool = False, allow_overwrite: bool = True,
+                    width: float = 0.2) -> PyplotDiagram:
         # data should be like: {"2015": {"a": 1, "b": 2}, "2020": {"a": 4, "b": 5}}
-        if not self.__checkIfAbleToAdd():
+        if (not self.__checkIfAbleToAdd()) and self.plot_type != PyplotDiagram.PlotType.series:
             self.__showFailToAddMessage()
             return
+        else:
+            self.plot_type = PyplotDiagram.PlotType.series
+
+        # Create dict if not exist
+        if not hasattr(self, "data"):
+            self.data = dict()
+
+        # Add new data to existing data
+        for key in data.keys():
+            if (not allow_overwrite) and (key in self.data):
+                console.warn("Key \"" + str(key) + "\" already exists, ignored.")
+                continue
+            else:
+                for subkey in data[key].keys():
+                    if (not allow_overwrite) and (subkey in self.data.get(key, dict())):
+                        console.warn("Sub-Key \"" + str(key) + "\" for key \"" + key + "\"already exists, ignored.")
+                        continue
+                    else:
+                        self.data[key] = {**self.data.get(key, dict()), **data[key]}
+
+        if draw_now:
+            return self.drawSeries(width)
+        else:
+            return self
+
+    def drawSeries(self, /,
+                   width: float = 0.2, interval: float = 0.2,
+                   show_value: bool = True, show_legend: bool = True) -> PyplotDiagram:
 
         plt.figure(self.id)
 
+        # data should be like: {"2015": {"a": 1, "b": 2}, "2020": {"a": 4, "b": 5}}
         # Add data to the set
+        data = self.data
         data_names, data_labels = [], []
         for data_name in data.keys():
             data_names.append(data_name) if data_name not in data_names else None
@@ -60,7 +89,7 @@ class PyplotDiagram:
             # Show the value of bar
             if show_value:
                 for x, y in zip(bar_position, values):
-                    plt.text(x + width / 2, y, f"{y:.4}", ha="center", va="bottom")
+                    plt.text(x + width / 2, y, f"{y:.4}" if type(y) == float else y, ha="center", va="bottom")
 
         del nth_data
 
@@ -95,5 +124,5 @@ class PyplotDiagram:
     def __showFailToAddMessage(self):
         console.warn(
             "The plot No.", self.count_num, "failed to add diagram because it already has.",
-            "Use \"clear\" method to clear the figure first, then add new diagram."
+            "Use \"clear\" method to clear the figure first, then add new diagram.", sep=" "
         )

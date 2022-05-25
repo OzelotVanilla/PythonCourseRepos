@@ -1,7 +1,6 @@
 from util.console import console
 
 from math import nan
-from sys import api_version
 import pandas as pd
 import numpy as np
 from sklearn.feature_selection import mutual_info_classif
@@ -9,7 +8,7 @@ from sklearn.model_selection import train_test_split
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.callbacks import EarlyStopping
-from tensorflow.keras.utils import to_categorical
+from keras.utils import to_categorical
 import os
 # from FCBF_module import FCBFK
 
@@ -42,9 +41,9 @@ def getClassToDigitDict() -> dict[str, dict[str, int]]:
 
 def classToDigitReplace(df: pd.DataFrame, replace_dict: dict[str, dict[str, int]] = getClassToDigitDict(), verbose=True):
     console.info("Converting descriptive data to numbers:")
-    if verbose: 
-        for key in replace_dict: 
-            print("\t", key + ":", replace_dict[key]) 
+    if verbose:
+        for key in replace_dict:
+            print("\t", key + ":", replace_dict[key])
     df.replace(replace_dict, inplace=True)
     console.info("Replaced required data.")
 
@@ -107,31 +106,35 @@ def unifyColOrder(*dfs: pd.DataFrame, order_list: list[str] = None) -> None:
 # Get the shared features among the input dataframes
 # Used in mlPredictValueMakeUp()
 
+
 def getSharedFeatures(*dfs: pd.DataFrame) -> list:
-    if len(dfs) == 0: return None
-    if len(dfs) == 1: dfs[0].columns.to_list()
+    if len(dfs) == 0:
+        return None
+    if len(dfs) == 1:
+        dfs[0].columns.to_list()
     shared_features = []
     # For every feature in the first data frame
     for feature in dfs[0].columns.to_list():
         flag = True
         # Not in every input dataset -> not a shared feature -> ignore
         for df in dfs[1:]:
-            if not (feature in df.columns.to_list()): 
+            if not (feature in df.columns.to_list()):
                 flag = False
                 break
         # Is a shared feature -> accept
-        if flag: shared_features.append(feature)
+        if flag:
+            shared_features.append(feature)
     return shared_features
 
 # Feature Selection Method
 # Select influential features from the columns of the dataframe
 
 
-def selectFeatures(df: pd.DataFrame, train_size=0.8, threshold=0.9, labelColName='HeartDisease'):
+def selectFeatures(df: pd.DataFrame, train_size=0.8, threshold=0.9, result_col_name='HeartDisease'):
     # Split train and test set
-    x = df.drop([labelColName], axis=1).values
+    x = df.drop([result_col_name], axis=1).values
     y = df.iloc[:, df.columns.to_list().index(
-        labelColName)].values.reshape(-1, 1)
+        result_col_name)].values.reshape(-1, 1)
     y = np.ravel(y)
     x_train, x_test, y_train, y_test = train_test_split(
         x, y, train_size=train_size, test_size=1 - train_size, random_state=0, stratify=y
@@ -141,7 +144,7 @@ def selectFeatures(df: pd.DataFrame, train_size=0.8, threshold=0.9, labelColName
     importances = mutual_info_classif(x_train, y_train)
 
     # Get all features
-    features = df.dtypes[df.dtypes != 'object'].drop(labelColName).index
+    features = df.dtypes[df.dtypes != 'object'].drop(result_col_name).index
 
     # Create pairs of importances and features
     f_list = sorted(
@@ -200,20 +203,22 @@ def averageValueMakeUp(df_src: pd.DataFrame, df_dist: pd.DataFrame, col_name, de
 
 
 # Use ML model to predict the missing values
-# according to the shared features between the two 
+# according to the shared features between the two
 # The function will save used model in output_dir='models/mlModelPredictionMakeUp' if possible
 
 
 def mlPredictValueMakeUp(df_src: pd.DataFrame, df_dist: pd.DataFrame, col_name, default_val=-1, insert_loc=-1, labelCol='HeartDisease', output_dir='models/mlModelPredictionMakeUp', enable_fs=False):
-    if col_name in df_dist.columns.to_list(): return None
+    if col_name in df_dist.columns.to_list():
+        return None
     # Get the shared features between the two datasets
     shared_features = getSharedFeatures(df_src, df_dist)
-    if labelCol in shared_features: shared_features.remove(labelCol)
+    if labelCol in shared_features:
+        shared_features.remove(labelCol)
     # number of features > 10 -> feature selection
     if enable_fs and len(shared_features) > 10:
         shared_features.append(col_name)
         df_src_shared = df_src[shared_features]
-        shared_features = selectFeatures(df_src_shared, labelColName=col_name) 
+        shared_features = selectFeatures(df_src_shared, result_col_name=col_name)
     # Get the number of categories of the wanted feature
     categorties_num = len(df_src[col_name].value_counts())
     # Train prediction model to generate values
@@ -243,7 +248,8 @@ def mlPredictValueMakeUp(df_src: pd.DataFrame, df_dist: pd.DataFrame, col_name, 
     # early_stopping_callback = EarlyStopping(monitor='val_accuracy', patience=2, verbose=1)
     model.fit(x_train, y_train, epochs=2, validation_data=(x_test, y_test))
     # Save the model
-    if os.path.exists(output_dir) and os.path.isdir(output_dir): model.save('{}/model_predict_{}.h5'.format(output_dir, col_name))
+    if os.path.exists(output_dir) and os.path.isdir(output_dir):
+        model.save('{}/model_predict_{}.h5'.format(output_dir, col_name))
     # Predict the missing values according to the shared features
     prediction = model.predict(df_dist[shared_features])
     # Fill the missing feature with the predicted values
@@ -282,7 +288,7 @@ def main():
     print(df_2015.columns)
     print(df_2020.columns)
     # Feature Selection
-    featureSelected = selectFeatures(df_2015, labelColName="HeartDisease")
+    featureSelected = selectFeatures(df_2015, result_col_name="HeartDisease")
     df_2015_fs = df_2015[featureSelected]
     # Missing Value Make Up
     makeUpAllMissingValue(df_2015_fs, df_2020, averageValueMakeUp)
