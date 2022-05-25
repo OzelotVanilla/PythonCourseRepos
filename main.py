@@ -47,7 +47,7 @@ def main():
 
     # Feature Selection
     # Select the most influential features (first 90%) to the target value
-    console.info('Feature Selection (30-40s)')
+    console.info('Model Training 2015: Feature Selection (30-40s)')
     # Uses the mutual_info_classif method provided by Keras, which is encapsulated in the selectFeatures method (self-implemented)
     # df_2015_fs: the 2015 dataset containing only the selected features
 
