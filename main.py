@@ -248,9 +248,10 @@ def main():
     console.clear()
 
     ### Result Analysis (ploting) #####################################################################################
+
     # Draw the plot of loss and accuracy of each model
     diagram = PyplotDiagram()
-    diagram.addAsSeriess(
+    diagram.addAsSeries(
         {"Original 2015 Model": model_2015_result, "Original 2020 Model": model_2020_result,
          "Filled -1 Model": model_2015_result_default,
          "Filled with Machine Learning Value": model_2015_result_ml,
