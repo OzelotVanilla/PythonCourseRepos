@@ -64,21 +64,27 @@ def getModel(dataset_path_or_dataframe, target_column_name: str,
 
 
 # Return at least the loss of a model in list
-def testModel(model: TrainedModel, /, use_CPU: bool = False) -> dict[str, object]:
+def testModel(model: TrainedModel, test_result_column=None, test_data_column=None, /, use_CPU: bool = False) -> dict[str, object]:
     console.info("Testing model...")
-    result_column, data_column = model.result_column, model.data_column
+    # No test reference input -> use the train set to test
+    if (test_result_column is None): test_result_column = model.result_column
+    if (test_data_column is None): test_data_column = model.data_column
 
     # Choose use CPU or GPU
     model = model.model
     with tensorflow.device("/cpu:0" if use_CPU else getBestGPUTensorFlow()):
-        eval_result = model.evaluate(data_column, result_column)
+        # Evaluate the model
+        eval_result = model.evaluate(test_data_column, test_result_column)
 
+    # Convert output to dict (for plotting's convenience)
     # Check if returned value is not list, change to list for zip function
     if type(eval_result) != type([]):
         eval_result = [eval_result]
     console.info("Model trained, these information available:")
+    # Save output to dict
     result = dict()
     for (key, value) in zip(model.metrics_names, eval_result):
+        # Display evaluation output
         print("\t" + str(key) + ":", value)
         result[key] = value
 
@@ -86,7 +92,7 @@ def testModel(model: TrainedModel, /, use_CPU: bool = False) -> dict[str, object
     return result
 
 
-def getModelByXYColumn(result_column: pd.Series, data_column: pd.DataFrame,
+def getModelByXYColumn(result_column, data_column,
                        /, use_CPU: bool = False, descr_convert: dict[str, dict[str, int]] = None,
                        layers: list[KerasLayer] = [KerasDenseLayer(10, activation="relu")] * 3,
                        compile_optimizer: str = "adam", compile_loss_function="mean_squared_error",
@@ -94,7 +100,7 @@ def getModelByXYColumn(result_column: pd.Series, data_column: pd.DataFrame,
                        fit_callbacks=[KerasEarlyStop(patience=3)], fit_epoch: int = 1) -> TrainedModel:
     console.clear()
     console.info(
-        "Ready to train model predicting \"" + result_column.name + "\"."
+        "Start model training."
     )
 
     model = summonModel(
@@ -104,7 +110,7 @@ def getModelByXYColumn(result_column: pd.Series, data_column: pd.DataFrame,
     )
 
     console.info(
-        "Successfully trained model predicting \"" + result_column.name + "\"."
+        "Successfully trained model"
     )
     console.wait(4)
 

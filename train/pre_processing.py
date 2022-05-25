@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.callbacks import EarlyStopping
-from keras.utils import to_categorical
+from tensorflow.keras.utils import to_categorical
 import os
 # from FCBF_module import FCBFK
 
@@ -130,11 +130,11 @@ def getSharedFeatures(*dfs: pd.DataFrame) -> list:
 # Select influential features from the columns of the dataframe
 
 
-def selectFeatures(df: pd.DataFrame, train_size=0.8, threshold=0.9, result_col_name='HeartDisease'):
+def selectFeatures(df: pd.DataFrame, train_size=0.8, threshold=0.9, labelColName='HeartDisease'):
     # Split train and test set
-    x = df.drop([result_col_name], axis=1).values
+    x = df.drop([labelColName], axis=1).values
     y = df.iloc[:, df.columns.to_list().index(
-        result_col_name)].values.reshape(-1, 1)
+        labelColName)].values.reshape(-1, 1)
     y = np.ravel(y)
     x_train, x_test, y_train, y_test = train_test_split(
         x, y, train_size=train_size, test_size=1 - train_size, random_state=0, stratify=y
@@ -144,7 +144,7 @@ def selectFeatures(df: pd.DataFrame, train_size=0.8, threshold=0.9, result_col_n
     importances = mutual_info_classif(x_train, y_train)
 
     # Get all features
-    features = df.dtypes[df.dtypes != 'object'].drop(result_col_name).index
+    features = df.dtypes[df.dtypes != 'object'].drop(labelColName).index
 
     # Create pairs of importances and features
     f_list = sorted(
@@ -218,7 +218,7 @@ def mlPredictValueMakeUp(df_src: pd.DataFrame, df_dist: pd.DataFrame, col_name, 
     if enable_fs and len(shared_features) > 10:
         shared_features.append(col_name)
         df_src_shared = df_src[shared_features]
-        shared_features = selectFeatures(df_src_shared, result_col_name=col_name)
+        shared_features = selectFeatures(df_src_shared, labelColName=col_name)
     # Get the number of categories of the wanted feature
     categorties_num = len(df_src[col_name].value_counts())
     # Train prediction model to generate values
@@ -288,7 +288,7 @@ def main():
     print(df_2015.columns)
     print(df_2020.columns)
     # Feature Selection
-    featureSelected = selectFeatures(df_2015, result_col_name="HeartDisease")
+    featureSelected = selectFeatures(df_2015, labelColName="HeartDisease")
     df_2015_fs = df_2015[featureSelected]
     # Missing Value Make Up
     makeUpAllMissingValue(df_2015_fs, df_2020, averageValueMakeUp)
