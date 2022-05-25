@@ -49,6 +49,7 @@ This program **will NOT**:
 The project is aimed to verify the feasibility of using an already **trained model** to do prediction on **a newer dataset** about the same topic with slightly different feature settings, which is supposed to save the **time cost** of training a new model for each dataset when the population is large and make it easier to use existing trained models on the Internet.
 The Repository is for CPS 3320 Python Programming's course project.  
 
+<!-- 
 ### Main Idea
 The aim of the project is: train a model with dataset `A`,
 and let this model be able to predict dataset `B`, which is similar to `A`.
@@ -56,11 +57,10 @@ and let this model be able to predict dataset `B`, which is similar to `A`.
 First, the dataset `B` will be proceed to match the column in `A`.
 For missing data in `B`, we will fill it.
 
-<!--
 The main value of filling data will be:
 **average**, **mode** (number happens most), **abnormal value** (like `-1`),
-**outlier** (too small or too big value), **NaN** (in different libraies).
--->
+**outlier** (too small or too big value), **NaN** (in different libraies). -->
+
 ### Datasets
 The project uses two heart disease datasets from Kaggle  
 The datasets are excerpts of the annual DCD survey data. And each of them has more than `250k` of records
