@@ -106,7 +106,7 @@ Using the normal entrence of the program `main.py` to run the project will autom
 
 `Project_Interactive_Demo.ipynb` file: the interactive version of the project with code explanation
 
-## Useage
+## Usage
 Make sure you have checked all contents in **Before Running** and **Program Interation Range** section.  
 ### main.py & Project_Iteractive_Demo.ipynb
 Both `main.py` and `Project_Interactive_Demo.ipynb` contains the main logic of the program.  
@@ -119,6 +119,7 @@ The following listed some differences between them:
 Both `main.py` and `Project_Interactive_Demo.ipynb` are available entrance of the project program. However, directly running the `Project_Interactive_Demo.ipynb` requires the user to manually download the datasets (if not included).
 ### Recommended Order
 It is recommended to **firstly** run `main.py` to download the datasets and generate the intermediate products, which will be saved in files, **then** use the `Project_Iteractive_Demo.ipynb` to evalute the program using check points to qickly resume the progress from the intermediate files.
+
 ## Other Information
 
 autopep8 was used as the format manager of the python files.
