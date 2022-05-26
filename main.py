@@ -142,7 +142,7 @@ def main():
     # Prepare the ML model output directory
     if not os.path.exists('models/mlModelPredictionMakeUp'):
         os.mkdir('models/mlModelPredictionMakeUp')
-
+    #
     # In training the model for each missing features, a universal set of layers is used to train the models as the following shows:
     # - Input Layer: Dense 16 relu
     # - Hidden Layer: Dense 16 relu

@@ -118,7 +118,11 @@ The following listed some differences between them:
 ### Which one to choose?  
 Both `main.py` and `Project_Interactive_Demo.ipynb` are available entrance of the project program. However, directly running the `Project_Interactive_Demo.ipynb` requires the user to manually download the datasets (if not included).
 ### Recommended Order
-It is recommended to **firstly** run `main.py` to download the datasets and generate the intermediate products, which will be saved in files, **then** use the `Project_Iteractive_Demo.ipynb` to evalute the program using check points to qickly resume the progress from the intermediate files.
+It is recommended to **firstly** run `main.py` to download the datasets and generate the intermediate products, which will be saved in files, **then** employ the `Project_Iteractive_Demo.ipynb` to evalute the program using check points to qickly resume the progress from the intermediate files.
+
+## References
+[Intrusion_Detection_Using_CICIDS2017](https://github.com/arif6008/Intrusion_Detection_Using_CICIDS2017)  
+[Deep learning under the keras framework (2) two-class and multi-class problems](https://blog.51cto.com/u_15060545/4350777)
 
 ## Other Information
 

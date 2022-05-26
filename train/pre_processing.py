@@ -137,6 +137,7 @@ def getFeatureSelectedDataFrame(from_df: pd.DataFrame, result_col_name: str,
 
 # Feature Selection Method
 # Select influential features from the columns of the dataframe
+# Reference: https://github.com/arif6008/Intrusion_Detection_Using_CICIDS2017
 
 
 def selectFeatures(df: pd.DataFrame, train_size=0.8, threshold=0.9, labelColName='HeartDisease'):
@@ -178,15 +179,6 @@ def selectFeatures(df: pd.DataFrame, train_size=0.8, threshold=0.9, labelColName
 
     # Return result
     return selected_features
-
-
-def twoDimPredictionToCategory(prediction: np.ndarray):
-    # Create the output array
-    result = np.ndarray(shape=(prediction.shape[0]))
-    # Get the index of the highest probability for each single prediction
-    # Append the category (index) to result array
-    for i in range(prediction.shape[0]):
-        result[i] = prediction[i]
 
 
 # Make up for missing features (***MakeUp)
