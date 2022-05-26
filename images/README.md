@@ -2,7 +2,7 @@
 This directory contains the example program output that explains some of the desicions and conclusions in the projects.  
 For more details about how the images are created and what their meaning is, please check `Project_Interactive_Demo.ipynb`.
 ## Notice
-Because the background of the axes area in the image is transparent, please check in images with a bright background color.
+Because the background of the axes area in the image is transparent, please check the images with a bright background color.
 ## Files
 ### acc_2015.png
 The change of training and validation **accuracy** when test training the **2015 model**  
