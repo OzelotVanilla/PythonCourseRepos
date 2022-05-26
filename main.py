@@ -38,7 +38,7 @@ def main():
     df_2020.to_csv('datasets/data_2020_modified.csv', index=False)
 
     console.info('Data Cleaning: Complete')
-    console.wait(5)
+    console.wait(3)
     console.clear()
 
     ### Train a model for the 2015 dataset ############################################################################
@@ -65,10 +65,6 @@ def main():
     x, y = df_2015_fs.values, df_2015["HeartDisease"].values
     x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, test_size=0.2, random_state=0)
     # Prepare layer set
-    # Input Layer: Dense 16 relu
-    # Hidden Layer: Dense 64 relu
-    # Hidden Layer: Dense 32 relu
-    # Output Layer: Dense 1 sigmoid
     # From the experiment, 4 epoches is found to be the best trainning configuration
     # On such small dataset use CPU to compute usually have higher efficiency
     # Check Project_Interactive_Demo.ipynb for more information about this configureation
@@ -157,7 +153,7 @@ def main():
     df_2020_ml.to_csv('datasets/makedUpDatasets/data_2020_ml.csv', index=False)
 
     console.info('Missing Values Making Up: Complete')
-    console.wait(5)
+    console.wait(3)
     console.clear()
 
     ### Test performance of the maked up data #########################################################################
@@ -186,7 +182,7 @@ def main():
     model_2015_result_ml = testModel(model_2015, y, x, use_CPU=True)
 
     console.info('Maked Up Dataset Performance Test: Complete')
-    console.wait(5)
+    console.wait(3)
     console.clear()
 
     ### Train a new model for the 2020 dataset ########################################################################
@@ -197,12 +193,8 @@ def main():
     # Select the most influential features (first 90%) to the target value
     console.info('Model Training 2020: 1. Feature Selection (30-40s)')
     # Uses the mutual_info_classif method provided by Keras, which is encapsulated in the selectFeatures method (self-implemented)
-    features_selected = selectFeatures(df_2020, labelColName="HeartDisease", threshold=0.9)
-    print("{} features selected".format(len(features_selected)))
-    print(features_selected)
-    console.wait(3)
     # df_2020_fs: the 2020 dataset containing only the selected features
-    df_2020_fs = df_2020[features_selected]
+    df_2020_fs, features_selected = getFeatureSelectedDataFrame(df_2020, "HeartDisease", 0.9)
     # Save the dataset with only selected features
     df_2020_fs.to_csv('datasets/data_2020_fs.csv', index=False)
     console.info('Model Training 2020: 1. data_2020 with only selected features was saved to model dir')
@@ -214,23 +206,18 @@ def main():
     y = df_2020["HeartDisease"].values
     x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, test_size=0.2, random_state=0)
     # Prepare layer set
-    # Input Layer: Dense 16 relu
-    # Hidden Layer: Dense 64 relu
-    # Hidden Layer: Dense 32 relu
-    # Output Layer: Dense 1 sigmoid
-    layers = [
-        KerasDenseLayer(16, activation="relu", input_dim=len(features_selected)),  # Input Layer (input_dim=11)
-        KerasDenseLayer(64, activation="relu"),                                 # Hidden Layer #1
-        KerasDenseLayer(32, activation="relu"),                                 # Hidden Layer #2
-        KerasDenseLayer(1, activation="sigmoid")                                # Output Layer
-    ]
     # From the experiment, 3 epoches is found to be the best trainning configuration
     # On such small dataset use CPU to compute usually have higher efficiency
     # Check Project_Interactive_Demo.ipynb for more information about this configureation
     # (Train a model for the 2020 dataset/Test Trainning: Find the best configuration)
     model_2020 = getModelByXYColumn(
         y_train, x_train,
-        use_CPU=True, layers=layers,
+        use_CPU=True, layers=[
+            KerasDenseLayer(16, activation="relu", input_dim=len(features_selected)),  # Input Layer (input_dim=11)
+            KerasDenseLayer(64, activation="relu"),                                 # Hidden Layer #1
+            KerasDenseLayer(32, activation="relu"),                                 # Hidden Layer #2
+            KerasDenseLayer(1, activation="sigmoid")                                # Output Layer
+        ],
         fit_epoch=3, compile_loss_function='binary_crossentropy',
         fit_callbacks=[], validation_split=0
     )
@@ -244,7 +231,7 @@ def main():
     model_2020.model.save('models/model_2020.h5')
 
     console.info('Model Training 2020: Complete')
-    console.wait(5)
+    console.wait(3)
     console.clear()
 
     ### Result Analysis (ploting) #####################################################################################
@@ -258,7 +245,7 @@ def main():
          "Filled -1 Model": model_2015_result_default,
          "Filled with Machine Learning Value": model_2015_result_ml,
          "Filled with Average Value": model_2015_result_average}
-    ).drawSeries().setTitle("Datasets Trained Result")
+    ).drawSeries(show_double_axis=True).setTitle("Datasets Trained Result")
     PyplotDiagram.showAllPlot()
 
     ### Environment Cleaning ##########################################################################################

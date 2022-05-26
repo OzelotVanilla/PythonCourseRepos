@@ -133,6 +133,7 @@ def getFeatureSelectedDataFrame(from_df: pd.DataFrame, result_col_name: str,
     print("\tColumns before:", from_df.columns.values)
     features_selected = selectFeatures(from_df, train_size, select_percentage, result_col_name)
     console.info(f"Selected {len(features_selected)} feature.")
+    console.wait(2)
     return from_df[features_selected], features_selected
 
 # Feature Selection Method

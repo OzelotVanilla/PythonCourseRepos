@@ -99,13 +99,14 @@ class PyplotDiagram:
             data_labels
         )
 
+        # Show legend if required
+        if show_legend:
+            plt.gca().legend(loc="upper left")
+
         # Show double axis
         if show_double_axis:
             left_axis = plt.gca()
             left_axis.twinx().set_yticks(left_axis.get_yticks())
-
-        # Show legend if required
-        plt.legend(loc="upper left") if show_legend else None
 
         return self
 
