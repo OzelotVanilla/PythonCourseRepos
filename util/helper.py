@@ -202,7 +202,7 @@ def __deleteKaggleConfig():
     console.warn("Deleting Kaggle config folder.")
     user_home_path = os.path.expanduser("~")
     try:
-        removeDirTree(user_home_path + "./.kaggle/")
+        removeDirTree(user_home_path + "/.kaggle/")
     except:
         console.warn(
             f"Your system does not permit deleting folder \"{user_home_path}/.kaggle/\".",
