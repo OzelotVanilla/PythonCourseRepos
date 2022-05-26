@@ -104,7 +104,7 @@ Using the normal entrence of the program `main.py` to run the project will autom
 
 `util` directory: self-defined tools that help programming.
 
-`clean_project_dir` file: remove all datasets and intermediate product of the project.
+`clean_project_dir.py` file: remove all datasets and intermediate product of the project.
 
 `main.py` file: the entry for the project.
 
