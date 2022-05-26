@@ -241,10 +241,12 @@ def main():
     # Draw the plot of loss and accuracy of each model
     diagram = PyplotDiagram()
     diagram.addAsSeries(
-        {"Original 2015 Model": model_2015_result, "Original 2020 Model": model_2020_result,
-         "Filled -1 Model": model_2015_result_default,
-         "Filled with Machine Learning Value": model_2015_result_ml,
-         "Filled with Average Value": model_2015_result_average}
+        {"Native 2015 Model": model_2015_result, 
+         "Filled with Default Value": model_2015_result_default,
+         "Filled with Average Value": model_2015_result_average,
+         "Predicted with ML Model": model_2015_result_ml,
+         "Native 2020 Model": model_2020_result
+         }
     ).drawSeries(show_double_axis=True).setTitle("Datasets Trained Result")
     PyplotDiagram.showAllPlot()
 

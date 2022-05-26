@@ -96,11 +96,15 @@ Using the normal entrence of the program `main.py` to run the project will autom
 
 `models` directory: save trained models. Will be created during running the program.
 
+`images` directory: project output graph example.
+
 ~~`lib` directory: useful tools **from others**.~~
 
 `train` directory: self-defined python modules for training models.
 
 `util` directory: self-defined tools that help programming.
+
+`clean_project_dir` file: remove all datasets and intermediate product of the project.
 
 `main.py` file: the entry for the project.
 
