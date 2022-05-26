@@ -1,5 +1,4 @@
 from importlib.util import find_spec as hasModule
-from clean_project_dir import removeDirTree
 from util.console import console
 
 import os
@@ -60,6 +59,21 @@ def getBestGPUTensorFlow() -> str:
         return "/cpu:0"
     else:
         return "/gpu:0"
+
+# Recursively remove all files and directory
+
+
+def removeDirTree(dir_path):
+    files_or_dirs = os.listdir(dir_path)
+    # Remove contents
+    for file_or_dir in files_or_dirs:
+        path = os.path.join(dir_path, file_or_dir)
+        if os.path.isfile(path):
+            os.remove(path)
+        elif os.path.isdir(path):
+            removeDirTree(path)
+    # Remove the directory
+    os.rmdir(dir_path)
 
 
 def __checkIfRequiredModuleInstalled() -> None:
