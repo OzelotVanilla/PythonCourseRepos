@@ -60,6 +60,17 @@ def getBestGPUTensorFlow() -> str:
     else:
         return "/gpu:0"
 
+# Recursively remove all files and directory
+def removeDirTree(dir_path):
+    files_or_dirs = os.listdir(dir_path)
+    # Remove contents
+    for file_or_dir in files_or_dirs:
+        path = os.path.join(dir_path, file_or_dir)
+        if os.path.isfile(path): os.remove(path)
+        elif os.path.isdir(path): removeDirTree(path)
+    # Remove the directory
+    os.rmdir(dir_path)
+
 
 def __checkIfRequiredModuleInstalled() -> None:
     console.info("Checking if required modules are installed...")
@@ -122,7 +133,7 @@ def __prepareKaggleRunningEnv() -> None:
         console.info("Created \"~/.kaggle/\" folder.")
 
     # Check if "kaggle.json" exist, if exist, backup it
-    if (os.path.exists(user_home_path + "/.kaggle/kaggle.json" and os.path.isfile(user_home_path + "/.kaggle/kaggle.json"))):
+    if (os.path.exists(user_home_path + "/.kaggle/kaggle.json") and os.path.isfile(user_home_path + "/.kaggle/kaggle.json")):
         # If the backup also exists (happens when you have run this script for multiple times)
         if os.path.exists(user_home_path + "/.kaggle/kaggle.json.course_projcet_backup"):
             os.remove(user_home_path + "/.kaggle/kaggle.json.course_projcet_backup")
@@ -185,9 +196,9 @@ def __uninstallKaggle() -> None:
 def __deleteKaggleConfig():
     # If user want to uninstall, delete kaggle config folder under current user's folder
     user_home_path = os.path.expanduser("~")
-    if os.path.exists(user_home_path + "/.kaggle/kaggle.json"):
-        os.remove(user_home_path + "/.kaggle/kaggle.json")
-    os.remove(user_home_path + "./.kaggle/")
+    removeDirTree(user_home_path + '/.kaggle')
+    # if os.path.exists(user_home_path + "/.kaggle/kaggle.json"):
+    #     os.remove(user_home_path + "/.kaggle/kaggle.json")
 
 
 def __restoreKaggleConfig():

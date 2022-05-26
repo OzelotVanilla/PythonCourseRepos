@@ -1,21 +1,10 @@
 import os
 from util.console import console
+from util.helper import removeDirTree
 # This Python Script is aimed to restore the project directory to its initial structure as cloned from GitHub
 
 # It will clean the datasets and all intermediate products of the program (models, maked_up datasets, feature selected datasets, etc.)
 # You can generate those files by running main.py (Project_Interactive_Demo.ipynb cannot automaticly download datasets)
-
-# Recursively remove all files and directory
-def removeDirTree(dir_path):
-    files_or_dirs = os.listdir(dir_path)
-    print(files_or_dirs)
-    # Remove contents
-    for file_or_dir in files_or_dirs:
-        path = os.path.join(dir_path, file_or_dir)
-        if os.path.isfile(path): os.remove(path)
-        elif os.path.isdir(path): removeDirTree(path)
-    # Remove the directory
-    os.rmdir(dir_path)
 
 def main():
     # Get User Response (Avoid accidental operations)
