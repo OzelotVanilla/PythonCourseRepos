@@ -92,7 +92,7 @@ def main():
     model_2015.model.save('models/model_2015.h5')
 
     console.info('Model Training 2015: Complete')
-    console.wait(5)
+    console.wait(3)
     console.clear()
 
     ### Make up missing values in the 2020 dataset ####################################################################

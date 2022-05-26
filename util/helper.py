@@ -1,4 +1,5 @@
 from importlib.util import find_spec as hasModule
+from clean_project_dir import removeDirTree
 from util.console import console
 
 import os
@@ -122,7 +123,7 @@ def __prepareKaggleRunningEnv() -> None:
         console.info("Created \"~/.kaggle/\" folder.")
 
     # Check if "kaggle.json" exist, if exist, backup it
-    if (os.path.exists(user_home_path + "/.kaggle/kaggle.json" and os.path.isfile(user_home_path + "/.kaggle/kaggle.json"))):
+    if (os.path.exists(user_home_path + "/.kaggle/kaggle.json") and os.path.isfile(user_home_path + "/.kaggle/kaggle.json")):
         # If the backup also exists (happens when you have run this script for multiple times)
         if os.path.exists(user_home_path + "/.kaggle/kaggle.json.course_projcet_backup"):
             os.remove(user_home_path + "/.kaggle/kaggle.json.course_projcet_backup")
@@ -184,10 +185,15 @@ def __uninstallKaggle() -> None:
 
 def __deleteKaggleConfig():
     # If user want to uninstall, delete kaggle config folder under current user's folder
+    console.warn("Deleting Kaggle config folder.")
     user_home_path = os.path.expanduser("~")
-    if os.path.exists(user_home_path + "/.kaggle/kaggle.json"):
-        os.remove(user_home_path + "/.kaggle/kaggle.json")
-    os.remove(user_home_path + "./.kaggle/")
+    try:
+        removeDirTree(user_home_path + "./.kaggle/")
+    except:
+        console.warn(
+            f"Your system does not permit deleting folder \"{user_home_path}/.kaggle/\".",
+            "Delete it manually please."
+        )
 
 
 def __restoreKaggleConfig():

@@ -1,3 +1,4 @@
+import math
 from util.console import console
 
 from enum import Enum
@@ -58,9 +59,16 @@ class PyplotDiagram:
 
     def drawSeries(self, /,
                    width: float = 0.2, interval: float = 0.2,
-                   show_value: bool = True, show_legend: bool = True, show_double_axis: bool = False) -> PyplotDiagram:
+                   show_value: bool = True, show_legend: bool = True, show_double_axis: bool = False,
+                   y_left_for: str = None, y_right_for: str = None,
+                   scale_y_left: float = None, scale_y_right: float = None) -> PyplotDiagram:
 
         plt.figure(self.id)
+
+        # Get two axis, because code after always use that
+        y_left = plt.gca()
+        y_right = y_left.twinx()
+        plt.sca(y_left)
 
         # data should be like: {"2015": {"a": 1, "b": 2}, "2020": {"a": 4, "b": 5}}
         # Add data to the set
@@ -101,12 +109,11 @@ class PyplotDiagram:
 
         # Show legend if required
         if show_legend:
-            plt.gca().legend(loc="upper left")
+            y_left.legend(loc="upper left")
 
         # Show double axis
         if show_double_axis:
-            left_axis = plt.gca()
-            left_axis.twinx().set_yticks(left_axis.get_yticks())
+            y_right.set_yticks(y_left.get_yticks())
 
         return self
 
