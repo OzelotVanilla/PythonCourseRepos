@@ -43,7 +43,7 @@ def cleanEnv() -> None:
     console.clear()
 
     # Ask if remove kaggle command line tool
-    if input("Do you want to remove kaggle command line tool (type \"yes\" to uninstall, enter=no)? ") == "yes":
+    if input("\n[INPUT] Do you want to remove kaggle command line tool (type \"yes\" to uninstall, enter=no)? ") == "yes":
         __uninstallKaggle()
 
     # Restore backup file if not uninstall and it exist
@@ -67,6 +67,12 @@ def removeDirTree(dir_path, ignoring: list[str] = None):
     """
     Parameter \"ignoring: list<string>\" is case sensitive.
     """
+
+    if type(ignoring) == list and len(ignoring) == 0:
+        console.warn("Parameter \"ignoring\" was set, but empty.")
+    elif ignoring != None and type(ignoring) != list:
+        console.warn("Parameter \"ignoring\" was set to invalid value.")
+
     files_or_dirs = os.listdir(dir_path)
     # Remove contents
     for file_or_dir in files_or_dirs:
@@ -79,10 +85,10 @@ def removeDirTree(dir_path, ignoring: list[str] = None):
             removeDirTree(path)
 
     # Remove the directory
-    if ignoring == None:
+    if ignoring == None or len(ignoring) == 0:
         os.rmdir(dir_path)
     else:
-        console.info("Some files was hold, and the directory remained.")
+        console.info("Some files was held, and the directory remained.")
         print("\tHeld files:", str(ignoring))
 
 
@@ -202,7 +208,7 @@ def __downloadKaggleDatasets(dataset_info_list: list[tuple[str, str]]):
 def __uninstallKaggle() -> None:
     console.warn("Uninstalling Kaggle command line tool...")
     run("pip uninstall kaggle")
-    if input("\nAlso remove config file (type \"yes\" to delete, default \"no\")? ") == "yes":
+    if input("\n[INPUT] Also remove config file (type \"yes\" to delete, default \"no\")? ") == "yes":
         __deleteKaggleConfig()
     console.info("Kaggle command line tool uninstalled.\n")
 

@@ -13,7 +13,7 @@ def main():
     # Get User Response (Avoid accidental operations)
     console.warn("This python script is going to remove the intermediate product of the program")
     print("You can generate those files again by running main.py")
-    console.warn("The following directory will be delected: ")
+    console.warn("The following directory will be deleted: ")
     dir_to_del = ['datasets', 'models', 'lib']
     for dir in dir_to_del:
         if os.path.exists(dir):
@@ -24,7 +24,7 @@ def main():
                 console.warn('Please check the file: {}'.format(dir))
                 console.warn('\nProgram Exited')
                 exit(1)
-    input_str = input('Are you sure to continue (yes/[no]): ')
+    input_str = input('\n[INPUT] Are you sure to continue (yes/[no]): ')
     # Yes -> Remove the directories
     if input_str.lower() == 'yes':
         console.info('Start Removing')
