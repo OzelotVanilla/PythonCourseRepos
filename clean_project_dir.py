@@ -31,7 +31,7 @@ def main():
         for dir in dir_to_del:
             if os.path.exists(dir):
                 console.info('Removing \'{}\''.format(dir))
-                removeDirTree(dir)
+                removeDirTree(dir, ["README.md"])
         console.info('Project Directory Cleaning Complete')
     # No -> Cancel
     else:

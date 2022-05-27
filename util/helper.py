@@ -63,17 +63,27 @@ def getBestGPUTensorFlow() -> str:
 # Recursively remove all files and directory
 
 
-def removeDirTree(dir_path):
+def removeDirTree(dir_path, ignoring: list[str] = None):
+    """
+    Parameter \"ignoring: list<string>\" is case sensitive.
+    """
     files_or_dirs = os.listdir(dir_path)
     # Remove contents
     for file_or_dir in files_or_dirs:
         path = os.path.join(dir_path, file_or_dir)
-        if os.path.isfile(path):
+        if type(ignoring) == list and file_or_dir in ignoring:
+            console.info(f"File or directory \"{file_or_dir}\" ignored.")
+        elif os.path.isfile(path):
             os.remove(path)
         elif os.path.isdir(path):
             removeDirTree(path)
+
     # Remove the directory
-    os.rmdir(dir_path)
+    if ignoring == None:
+        os.rmdir(dir_path)
+    else:
+        console.info("Some files was hold, and the directory remained.")
+        print("\tHeld files:", str(ignoring))
 
 
 def __checkIfRequiredModuleInstalled() -> None:
