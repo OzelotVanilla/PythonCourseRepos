@@ -17,7 +17,7 @@ A CPS 3320 Python Programming Course Project - Wenzhou-Kean University
    * pandas
    * scikit-learn
    * matplotlib
-4. Also, make sure your Python version is greater or equal to 3.9.
+4. Also, make sure your Python version is greater or equal to 3.9 (using 3.9 and 3.10 when writing code).
    Because Python is interpret code files, some notations will be considered as error,
    but actually they are not error.
 5. Make sure the VSCode terminal can access to the internet. (For automatic dataset downloads)

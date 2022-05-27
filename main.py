@@ -202,8 +202,7 @@ def main():
     # Train the model according to 2020 data
     console.info('Model Training 2020: 2. Train binary-classification model for the 2020 dataset')
     # Split train and test set
-    x = df_2020_fs.values
-    y = df_2020["HeartDisease"].values
+    x, y = df_2020_fs.values, df_2020["HeartDisease"].values
     x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, test_size=0.2, random_state=0)
     # Prepare layer set
     # From the experiment, 3 epoches is found to be the best trainning configuration
@@ -241,12 +240,11 @@ def main():
     # Draw the plot of loss and accuracy of each model
     diagram = PyplotDiagram()
     diagram.addAsSeries(
-        {"Native 2015 Model": model_2015_result, 
+        {"Native 2015 Model": model_2015_result,
          "Filled with Default Value": model_2015_result_default,
          "Filled with Average Value": model_2015_result_average,
          "Predicted with ML Model": model_2015_result_ml,
-         "Native 2020 Model": model_2020_result
-         }
+         "Native 2020 Model": model_2020_result}
     ).drawSeries(show_double_axis=True).setTitle("Datasets Trained Result")
     PyplotDiagram.showAllPlot()
 
@@ -263,3 +261,5 @@ if __name__ == "__main__":
         print()
         console.err("You have stopped the program manually.")
         cleanEnv()
+    except PermissionError:
+        console.err(f"Encountered permission restriction: {PermissionError.strerror}")

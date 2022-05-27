@@ -181,7 +181,7 @@ def __downloadKaggleDatasets(dataset_info_list: list[tuple[str, str]]):
                 os.remove(new_file_path)
             except PermissionError:
                 console.err(
-                    "There is no permission writing file. Did you open that?"
+                    f"There is no permission writing file. Did you open \"{new_file_path}\"?"
                 )
                 for info_tuple in dataset_info_list:
                     os.remove("./datasets/" + info_tuple[1] + ".csv")
@@ -192,7 +192,7 @@ def __downloadKaggleDatasets(dataset_info_list: list[tuple[str, str]]):
 def __uninstallKaggle() -> None:
     console.warn("Uninstalling Kaggle command line tool...")
     run("pip uninstall kaggle")
-    if input("Also remove config file (type \"yes\" to delete)? ") == "yes":
+    if input("\nAlso remove config file (type \"yes\" to delete, default \"no\")? ") == "yes":
         __deleteKaggleConfig()
     console.info("Kaggle command line tool uninstalled.\n")
 
@@ -203,6 +203,7 @@ def __deleteKaggleConfig():
     user_home_path = os.path.expanduser("~")
     try:
         removeDirTree(user_home_path + "/.kaggle/")
+        console.info("Kaggle config file deleted.")
     except:
         console.warn(
             f"Your system does not permit deleting folder \"{user_home_path}/.kaggle/\".",
@@ -214,9 +215,14 @@ def __restoreKaggleConfig():
     # If there is backuped settings, restore them
     user_home_path = os.path.expanduser("~")
     if os.path.exists(user_home_path + "/.kaggle/kaggle.json.course_projcet_backup"):
-        if os.path.exists(user_home_path + "/.kaggle/kaggle.json"):
-            os.remove(user_home_path + "/.kaggle/kaggle.json")
-        os.rename(
-            user_home_path + "/.kaggle/kaggle.json.course_projcet_backup",
-            user_home_path + "/.kaggle/kaggle.json"
-        )
+        try:
+            if os.path.exists(user_home_path + "/.kaggle/kaggle.json"):
+                os.remove(user_home_path + "/.kaggle/kaggle.json")
+            os.rename(
+                user_home_path + "/.kaggle/kaggle.json.course_projcet_backup",
+                user_home_path + "/.kaggle/kaggle.json"
+            )
+        except PermissionError:
+            console.warn(
+                f"Failed to restore config because of permission settings: {PermissionError.strerror}"
+            )
