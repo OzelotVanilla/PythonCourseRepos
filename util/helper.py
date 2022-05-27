@@ -5,7 +5,7 @@ import os
 from os import system as run
 import requests
 import tensorflow
-
+from clean_project_dir import removeDirTree
 
 __module_to_check = ["tensorflow", "keras", "numpy", "pandas", "sklearn"]
 
@@ -59,37 +59,6 @@ def getBestGPUTensorFlow() -> str:
         return "/cpu:0"
     else:
         return "/gpu:0"
-
-# Recursively remove all files and directory
-
-
-def removeDirTree(dir_path, ignoring: list[str] = None):
-    """
-    Parameter \"ignoring: list<string>\" is case sensitive.
-    """
-
-    if type(ignoring) == list and len(ignoring) == 0:
-        console.warn("Parameter \"ignoring\" was set, but empty.")
-    elif ignoring != None and type(ignoring) != list:
-        console.warn("Parameter \"ignoring\" was set to invalid value.")
-
-    files_or_dirs = os.listdir(dir_path)
-    # Remove contents
-    for file_or_dir in files_or_dirs:
-        path = os.path.join(dir_path, file_or_dir)
-        if type(ignoring) == list and file_or_dir in ignoring:
-            console.info(f"File or directory \"{file_or_dir}\" ignored.")
-        elif os.path.isfile(path):
-            os.remove(path)
-        elif os.path.isdir(path):
-            removeDirTree(path)
-
-    # Remove the directory
-    if ignoring == None or len(ignoring) == 0:
-        os.rmdir(dir_path)
-    else:
-        console.info("Some files was held, and the directory remained.")
-        print("\tHeld files:", str(ignoring))
 
 
 def __checkIfRequiredModuleInstalled() -> None:

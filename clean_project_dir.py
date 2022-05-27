@@ -1,13 +1,40 @@
 import os
 from util.console import console
-from util.helper import removeDirTree
-# This Python Script is aimed to restore the project directory to its initial structure as cloned from GitHub
-
-# It will clean the datasets and all intermediate products of the program (models, maked_up datasets, feature selected datasets, etc.)
-# You can generate those files by running main.py (Project_Interactive_Demo.ipynb cannot automaticly download datasets)
+# This Python Script is aimed to restore the project directory to its initial structure
 
 # Recursively remove all files and directory
 
+def removeDirTree(dir_path, ignoring: list[str] = None):
+    """
+    Parameter \"ignoring: list<string>\" is case sensitive.
+    """
+
+    if type(ignoring) == list and len(ignoring) == 0:
+        console.warn("Parameter \"ignoring\" was set, but empty.")
+    elif ignoring != None and type(ignoring) != list:
+        console.warn("Parameter \"ignoring\" was set to invalid value.")
+
+    files_or_dirs = os.listdir(dir_path)
+    # Remove contents
+    for file_or_dir in files_or_dirs:
+        path = os.path.join(dir_path, file_or_dir)
+        if type(ignoring) == list and file_or_dir in ignoring:
+            console.info(f"File or directory \"{file_or_dir}\" ignored.")
+        elif os.path.isfile(path):
+            os.remove(path)
+        elif os.path.isdir(path):
+            removeDirTree(path)
+
+    # Remove the directory
+    if ignoring == None or len(ignoring) == 0:
+        os.rmdir(dir_path)
+    else:
+        console.info("Some files was held, and the directory remained.")
+        print("\tHeld files:", str(ignoring))
+
+
+# It will clean the datasets and all intermediate products of the program (models, maked_up datasets, feature selected datasets, etc.)
+# You can generate those files by running main.py (Project_Interactive_Demo.ipynb cannot automaticly download datasets)
 
 def main():
     # Get User Response (Avoid accidental operations)
@@ -35,7 +62,7 @@ def main():
         console.info('Project Directory Cleaning Complete')
     # No -> Cancel
     else:
-        console.info('Project Directory Cleaning Canceled')
+        console.info('Project Directory Cleaning Cancelled')
 
 
 if __name__ == '__main__':
