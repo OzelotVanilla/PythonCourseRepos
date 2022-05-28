@@ -18,6 +18,6 @@ A copy of data_2020 but with unified column names and order as well as standrize
 A slic of data_2015_modified containing only the selected features.  
 ### data_2020_fs.csv
 A slic of data_2020_modified containing only the selected features.  
-### *makedUpDatasets - directory*
+### *madeUpDatasets - directory*
 Containing the intermediate trained models used to support the `ML Model Prediction` data-making-up method
 Model Names: model_prediction_***.h5 (\*\*\* indicates the feature to predict)

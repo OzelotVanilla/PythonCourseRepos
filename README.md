@@ -84,7 +84,7 @@ Using the normal entrence of the program `main.py` to run the project will autom
    
    3. ML Model Prediction  
    
-3. Test out the performance of the `"maked up"` data of 2020 in predicting the heart disease  
+3. Test out the performance of the `"made up"` data of 2020 in predicting the heart disease  
 
 4. Train a new model for the '2020 dataset` as a comparison  
 

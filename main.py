@@ -100,8 +100,8 @@ def main():
     console.info('Missing Values Making Up: Start')
 
     # Prepare the dataset output directory
-    if not os.path.exists('datasets/makedUpDatasets'):
-        os.mkdir('datasets/makedUpDatasets')
+    if not os.path.exists('datasets/madeUpDatasets'):
+        os.mkdir('datasets/madeUpDatasets')
 
     # Default Value Filling
     console.info('Missing Values Making Up: 1. Default Value Filling')
@@ -109,20 +109,20 @@ def main():
     # -1 is used as the symbol of missing values in this project
     df_2020_default = df_2020.copy(deep=False)
     makeUpAllMissingValue(df_src=df_2015, df_dist=df_2020_default, makeUpFunc=defaultValueMakeUp)
-    # Save the maked up dataset
-    console.info('Missing Values Making Up: 1. Saving dataset maked up with default value filling')
-    df_2020_default.to_csv('datasets/makedUpDatasets/data_2020_default.csv', index=False)
+    # Save the made up dataset
+    console.info('Missing Values Making Up: 1. Saving dataset made up with default value filling')
+    df_2020_default.to_csv('datasets/madeUpDatasets/data_2020_default.csv', index=False)
 
     # Average Value Filling
     console.info('Missing Values Making Up: 2. Average Value Filling')
     # Use the average value of each feature to fill the missing values.
     # In this case, the average values are the most frequent appearing values of each feature
-    # because the featues that needed to be maked up are all digit represented classes.
+    # because the featues that needed to be made up are all digit represented classes.
     df_2020_average = df_2020.copy(deep=False)
     makeUpAllMissingValue(df_src=df_2015, df_dist=df_2020_average, makeUpFunc=averageValueMakeUp)
-    # Save the maked up dataset
-    console.info('Missing Values Making Up: 2. Saving dataset maked up with average value filling')
-    df_2020_average.to_csv('datasets/makedUpDatasets/data_2020_average.csv', index=False)
+    # Save the made up dataset
+    console.info('Missing Values Making Up: 2. Saving dataset made up with average value filling')
+    df_2020_average.to_csv('datasets/madeUpDatasets/data_2020_average.csv', index=False)
 
     # ML Model Prediction
     console.info('Missing Values Making Up: 3. ML Model Prediction')
@@ -130,7 +130,7 @@ def main():
     # which will then be used to predict the missing values in the 2020 dataset.
     #
     # The self-defined mlPredictValueMakeUp function will do the model training and data prediction work here.
-    # In general, a model will be created and trained for every feature that needed to be maked up.
+    # In general, a model will be created and trained for every feature that needed to be made up.
     #
     # Every model trained to predict missing values will be saved to 'models/mlModelPredictionMakeUp'
     # with file names 'model_predict_<name of the missing feature>.h5
@@ -148,40 +148,40 @@ def main():
         df_src=df_2015, df_dist=df_2020_ml, makeUpFunc=mlPredictValueMakeUp,
         output_dir='models/mlModelPredictionMakeUp'
     )
-    # Save the maked up dataset
-    console.info('Missing Values Making Up: 3. Saving dataset maked up with ML model prediction')
-    df_2020_ml.to_csv('datasets/makedUpDatasets/data_2020_ml.csv', index=False)
+    # Save the made up dataset
+    console.info('Missing Values Making Up: 3. Saving dataset made up with ML model prediction')
+    df_2020_ml.to_csv('datasets/madeUpDatasets/data_2020_ml.csv', index=False)
 
     console.info('Missing Values Making Up: Complete')
     console.wait(3)
     console.clear()
 
-    ### Test performance of the maked up data #########################################################################
+    ### Test performance of the made up data #########################################################################
 
-    console.info('Maked Up Dataset Performance Test: Start')
+    console.info('Made Up Dataset Performance Test: Start')
 
     # Default Value Filling Method
-    console.info('Maked Up Dataset Performance Test: 1. Default Value Filling Method')
+    console.info('Made Up Dataset Performance Test: 1. Default Value Filling Method')
     # Split features and label
     x, y = getFeaturesAndLabel(df_2020_default, features_selected, 'HeartDisease')
-    # Evaluate the performance of the maked up data
+    # Evaluate the performance of the made up data
     model_2015_result_default = testModel(model_2015, y, x, use_CPU=True)
 
     # Average Value Filling Method
-    console.info('Maked Up Dataset Performance Test: 2. Average Value Filling Method')
+    console.info('Made Up Dataset Performance Test: 2. Average Value Filling Method')
     # Split features and label
     x, y = getFeaturesAndLabel(df_2020_average, features_selected, 'HeartDisease')
-    # Evaluate the performance of the maked up data
+    # Evaluate the performance of the made up data
     model_2015_result_average = testModel(model_2015, y, x, use_CPU=True)
 
     # ML Model Prediction Method
-    console.info('Maked Up Dataset Performance Test: 3. ML Model Prediction Method')
+    console.info('Made Up Dataset Performance Test: 3. ML Model Prediction Method')
     # Split features and label
     x, y = getFeaturesAndLabel(df_2020_ml, features_selected, 'HeartDisease')
-    # Evaluate the performance of the maked up data
+    # Evaluate the performance of the made up data
     model_2015_result_ml = testModel(model_2015, y, x, use_CPU=True)
 
-    console.info('Maked Up Dataset Performance Test: Complete')
+    console.info('Made Up Dataset Performance Test: Complete')
     console.wait(3)
     console.clear()
 
